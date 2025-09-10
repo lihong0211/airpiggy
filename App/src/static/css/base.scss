@@ -1,0 +1,714 @@
+@use 'sass:color';
+@use './mixin.scss' as *;
+
+@each $color, $value in $colorsBase {
+  .bg-#{'' + $color} {
+    background-color: $value;
+  }
+  .color-#{'' + $color} {
+    color: $value;
+  }
+  .border-#{'' + $color} {
+    border: upx(1) solid $value;
+  }
+}
+
+@for $i from 10 through 30 {
+  .text-#{$i} {
+    font-size: upx($i);
+  }
+}
+
+.uni-input-input[type='password']::-ms-reveal {
+  display: none;
+}
+.tableHeader .uni-scroll-view::-webkit-scrollbar,
+.tableHeader .uni-scroll-view::-webkit-scrollbar {
+  display: none;
+}
+.safe-height {
+  height: var(--window-bottom);
+}
+.safe-top {
+  height: var(--window-top);
+}
+
+.safe-statusbar {
+  height: var(--status-bar-height);
+}
+
+.blur {
+  backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.pointer:hover {
+  opacity: 0.7;
+}
+
+// 溢出隐藏。
+.overflow {
+  overflow: hidden;
+}
+
+.overflow-x {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.overflow-y {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+$v_position: (
+  relative: relative,
+  absolute: absolute,
+  fixed: fixed,
+  sticky: sticky
+);
+
+@each $name, $key in $v_position {
+  .#{$name} {
+    position: $key !important;
+  }
+}
+
+.fulled-height {
+  display: flex;
+  align-items: stretch;
+}
+
+.clear {
+  clear: both;
+}
+
+.fulled {
+  width: 100%;
+  display: block;
+}
+
+.fulled-height {
+  height: 100%;
+  display: block;
+}
+
+.gray-100 {
+  filter: grayscale(100%);
+}
+
+.gray {
+  filter: grayscale(25%);
+}
+
+.d-inline-block {
+  display: inline-block !important;
+}
+
+.d-block {
+  display: block;
+}
+
+// 元素内联对齐 。vertical-align:top,middle,bottom
+@each $name, $key in (top: top, middle: middle, bottom: bottom) {
+  .vertical-align-#{$name} {
+    vertical-align: $key;
+  }
+}
+
+.wrap {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+// 元素内联对齐 。vertical-align:top,middle,bottom
+@each $name, $key in (top: top, middle: middle, bottom: bottom) {
+  .vertical-align-#{$name} {
+    vertical-align: $key;
+  }
+}
+
+@for $i from 0 through 26 {
+  .zIndex-#{$i} {
+    z-index: #{$i * 1};
+  }
+
+  .zIndex-n#{$i} {
+    z-index: #{$i * 4};
+  }
+}
+
+// 文本缩略。
+
+@mixin text-overflow($width: 100%, $display: block, $space: nowrap) {
+  width: $width;
+  display: $display;
+  white-space: $space;
+  overflow: hidden;
+}
+
+.text-overflow {
+  @include text-overflow();
+  text-overflow: ellipsis;
+}
+
+// 多行文本缩略。text-overflow-行：数字
+@for $i from 1 to 6 {
+  .text-overflow-#{$i} {
+    @include text-overflow(100%, -webkit-box, inherit);
+    line-clamp: $i;
+    -webkit-line-clamp: $i;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+  }
+}
+
+// 删除线.
+.text-delete {
+  text-decoration: line-through;
+}
+
+// 下划线
+.text-underline {
+  text-decoration: underline;
+}
+
+// 文本加粗text-weight-[400, 900]
+@for $i from 4 through 9 {
+  .weight-#{'' + $i * 100} {
+    font-weight: $i * 100;
+  }
+}
+
+// 文本对齐 。text-align-left,right,center
+@each $name, $key in (left: left, right: right, center: center) {
+  .text-align-#{$name} {
+    text-align: $key;
+  }
+}
+
+// 圆角半径
+
+// 圆角说明 round-方向-大小。
+// tl，顶左，tr顶右。bt底左，br底右。a全部。t:顶左和顶右，b:底左和底右，l:顶左和底左，r:顶右，底右。
+@each $name, $key in (tl: 'tl', tr: 'tr', bl: 'bl', br: 'br', a: 'a', t: 't', b: 'b', l: 'l', r: 'r') {
+  @for $i from 0 to 26 {
+    .round-#{$name}-#{$i} {
+      @if $key== 'tl' {
+        border-top-left-radius: upx($i) !important;
+      }
+
+      @if $key== 'tr' {
+        border-top-right-radius: upx($i) !important;
+      }
+
+      @if $key== 'bl' {
+        border-bottom-left-radius: upx($i) !important;
+      }
+
+      @if $key== 'br' {
+        border-bottom-right-radius: upx($i) !important;
+      }
+
+      @if $key== 't' {
+        border-top-left-radius: upx($i) !important;
+        border-top-right-radius: upx($i) !important;
+      }
+
+      @if $key== 'b' {
+        border-bottom-left-radius: upx($i) !important;
+        border-bottom-right-radius: upx($i) !important;
+      }
+
+      @if $key== 'l' {
+        border-top-left-radius: upx($i) !important;
+        border-bottom-left-radius: upx($i) !important;
+      }
+
+      @if $key== 'r' {
+        border-top-right-radius: upx($i) !important;
+        border-bottom-right-radius: upx($i) !important;
+      }
+
+      @if $key== 'a' {
+        border-radius: upx($i) !important;
+      }
+    }
+  }
+}
+
+// 从0-100的圆角round-数字
+@for $i from 0 through 26 {
+  .round-#{$i} {
+    border-radius: upx($i);
+  }
+}
+
+// 50%的半圆角rounded圆角50%
+.rounded {
+  border-radius: 50% !important;
+}
+
+/** 0-20表示的是1.0~3.0之间的行高 */
+@for $i from 0 through 21 {
+  .line-#{$i} {
+    line-height: #{$i * 0.1 + 1};
+  }
+}
+
+// 透明度opacity-[1-10]
+@for $i from 0 to 11 {
+  .opacity-#{$i} {
+    @if $i>0 and $i<10 {
+      opacity: $i * 0.1;
+    }
+
+    @if $i==0 {
+      opacity: 0;
+    }
+
+    @if $i==10 {
+      opacity: 1;
+    }
+  }
+}
+
+.shadow {
+  box-shadow: 0 upx(1) upx(1) rgba($color: rgba(0, 0, 0, 1), $alpha: 0.08);
+}
+
+@for $i from 0 to 26 {
+  .shadow-#{$i} {
+    box-shadow: 0 upx($i) upx($i + 5) rgba($color: rgba(0, 0, 0, 1), $alpha: 0.08);
+  }
+}
+
+// 添加边线 最大5
+@for $i from 0 to 6 {
+  @if $i==0 {
+    .border-0 {
+      border: solid 0 #f5f5f5 !important;
+    }
+
+    .border-0-bk {
+      border: solid 0 #282828 !important;
+    }
+
+    .border {
+      border: solid upx(1) #f5f5f5 !important;
+    }
+
+    .border-bk {
+      border: solid upx(1) #282828 !important;
+    }
+  }
+
+  @if $i>0 {
+    .border-#{$i} {
+      border: solid #{$i * 2}px #f5f5f5 !important;
+    }
+
+    .border-#{$i}-bk {
+      border: solid #{$i * 2}px #f5f5f5 !important;
+    }
+  }
+}
+
+// 边线格式1：border-方向t,r,l,b-宽度
+@each $name, $key in (l: 'left', r: 'right', t: 'top', b: 'bottom', a: 'a') {
+  @for $i from 1 to 6 {
+    .border-#{$name}-#{$i} {
+      @if $key== 'a' {
+        border: solid upx($i) color.adjust($color: #f5f5f5, $alpha: 1) !important;
+      }
+
+      @if $key != 'a' {
+        border-#{$key}: solid upx($i) color.adjust($color: #f5f5f5, $alpha: 1) !important;
+      }
+    }
+
+    .border-#{$name}-#{$i}-bk {
+      @if $key== 'a' {
+        border: solid upx($i) rgba($color: #282828, $alpha: 1) !important;
+      }
+
+      @if $key != 'a' {
+        border-#{$key}: solid upx($i) rgba($color: #282828, $alpha: 1) !important;
+      }
+    }
+  }
+}
+
+// 内间距。p[a,t,r,b,l,x,y]如：pa表示所有边距，px:左右，py:上下,pr:右边距
+@each $name, $key in (a: 'padding', t: 'padding-top', r: 'padding-right', b: 'padding-bottom', l: 'padding-left', x: 'x', y: 'y') {
+  @for $i from 0 to 26 {
+    @if $key != 'x' and $key != 'y' {
+      .p#{$name}-#{$i} {
+        #{$key}: upx($i);
+      }
+    }
+
+    @if $key== 'x' {
+      .px-#{$i} {
+        padding-left: upx($i);
+        padding-right: upx($i);
+      }
+    }
+
+    @if $key== 'y' {
+      .py-#{$i} {
+        padding-top: upx($i);
+        padding-bottom: upx($i);
+      }
+    }
+  }
+
+  @for $i from 1 to 26 {
+    @if $key != 'x' and $key != 'y' {
+      .p#{$name}-n#{$i} {
+        #{$key}: upx($i * 2);
+      }
+    }
+
+    @if $key== 'x' {
+      .px-n#{$i} {
+        padding-left: upx($i * 2);
+        padding-right: upx($i * 2);
+      }
+    }
+
+    @if $key== 'y' {
+      .py-n#{$i} {
+        padding-top: upx($i * 2);
+        padding-bottom: upx($i * 2);
+      }
+    }
+  }
+}
+
+// 外间距。m[a,t,r,b,l,x,y]如：ma表示所有外边距，mx:左右，my:上下,mr:右边距
+@each $name, $key in (a: 'margin', t: 'margin-top', r: 'margin-right', b: 'margin-bottom', l: 'margin-left', x: 'x', y: 'y') {
+  @for $i from 0 to 26 {
+    @if $key != 'x' and $key != 'y' {
+      .m#{$name}-#{$i} {
+        #{$key}: upx($i);
+      }
+
+      @if $key != 'margin' {
+        .m#{$name}--#{$i} {
+          #{$key}: upx($i * -1);
+        }
+      }
+    }
+
+    @if $key== 'x' {
+      .mx-#{$i} {
+        margin-left: upx($i);
+        margin-right: upx($i);
+      }
+    }
+
+    @if $key== 'y' {
+      .my-#{$i} {
+        margin-top: upx($i);
+        margin-bottom: upx($i);
+      }
+    }
+  }
+
+  @for $i from 1 to 26 {
+    @if $key != 'x' and $key != 'y' {
+      .m#{$name}-n#{$i} {
+        #{$key}: upx($i * 2);
+      }
+
+      @if $key != 'margin' {
+        .m#{$name}--n#{$i} {
+          #{$key}: upx($i * -2);
+        }
+      }
+    }
+
+    @if $key== 'x' {
+      .mx-n#{$i} {
+        margin-left: upx($i * 2);
+        margin-right: upx($i * 2);
+      }
+    }
+
+    @if $key== 'y' {
+      .my-n#{$i} {
+        margin-top: upx($i * 2);
+        margin-bottom: upx($i * 2);
+      }
+    }
+  }
+}
+
+// 位置。
+@each $name, $key in (t: 'top', r: 'right', b: 'bottom', l: 'left') {
+  @for $i from 0 to 26 {
+    .#{$name}-#{$i} {
+      #{$key}: upx($i);
+    }
+
+    .#{$name}--#{$i} {
+      #{$key}: upx($i * -1);
+    }
+  }
+
+  @for $i from 1 to 26 {
+    .#{$name}-n#{$i} {
+      #{$key}: upx($i * 2);
+    }
+
+    .#{$name}--n#{$i} {
+      #{$key}: upx($i * -2);
+    }
+  }
+}
+
+.grid {
+  display: grid !important;
+}
+
+@for $i from 1 to 13 {
+  .grid-col-#{$i} {
+    grid-template-columns: repeat(#{$i * 1}, 1fr);
+  }
+}
+@for $i from 1 to 26 {
+  .gap-#{$i} {
+    gap: upx($i);
+  }
+  .gap-col-#{$i} {
+    grid-column-gap: upx($i);
+  }
+  .gap-row-#{$i} {
+    grid-row-gap: upx($i);
+  }
+}
+
+// Flex辅助。
+@mixin display-flex($justify, $items, $content) {
+  justify-content: $justify !important;
+  align-items: $items !important;
+  align-content: $content;
+  display: flex !important;
+}
+
+// 布局。flex-top-start,flex-top-center,flex-top-end,flex-start,flex-end,flex-center,flex-between,flex-around
+// flex-end-left,flex-end-center,flex-end-right
+.flex {
+  display: flex !important;
+}
+
+.flex-col {
+  flex-direction: column !important;
+}
+
+.flex-wrap {
+  flex-flow: row wrap !important;
+}
+
+.flex-shrink {
+  flex-shrink: 0 !important;
+}
+
+.flex-row {
+  flex-direction: row !important;
+}
+
+.flex-reverse {
+  flex-direction: row-reverse !important;
+}
+//row模式下，上左对齐
+.flex-row-top-start {
+  @include display-flex(flex-start, flex-start, center);
+}
+
+//row模式下，上中对齐
+.flex-row-top-center {
+  @include display-flex(center, flex-start, center);
+}
+
+//row模式下，上右对齐
+.flex-row-top-end {
+  @include display-flex(flex-end, flex-start, center);
+}
+
+//row模式下，中左对齐
+.flex-row-center-start {
+  @include display-flex(flex-start, center, center);
+}
+
+//row模式下，中中对齐
+.flex-row-center-center {
+  @include display-flex(center, center, center);
+}
+
+//row模式下，上右对齐
+.flex-row-center-end {
+  @include display-flex(flex-end, center, center);
+}
+
+//row模式下，下左对齐
+.flex-row-bottom-start {
+  @include display-flex(flex-start, flex-end, center);
+}
+
+//row模式下，下中对齐
+.flex-row-bottom-center {
+  @include display-flex(center, flex-end, center);
+}
+
+//row模式下，下右对齐
+.flex-row-bottom-end {
+  @include display-flex(flex-end, flex-end, center);
+}
+
+//上下居中，两边对齐。
+.flex-row-center-between {
+  @include display-flex(space-between, center, center);
+}
+
+//--------
+//col模式下，上左对齐
+.flex-col-top-start {
+  @include display-flex(flex-start, flex-start, center);
+}
+
+//col模式下，上中对齐
+.flex-col-top-center {
+  @include display-flex(flex-start, center, center);
+}
+
+//col模式下，上右对齐
+.flex-col-top-end {
+  @include display-flex(flex-start, flex-end, center);
+}
+
+//col模式下，中左对齐
+.flex-col-center-start {
+  @include display-flex(center, flex-start, center);
+}
+
+//col模式下，中中对齐
+.flex-col-center-center {
+  @include display-flex(center, center, center);
+}
+
+//col模式下，上右对齐
+.flex-col-center-end {
+  @include display-flex(center, flex-end, center);
+}
+
+//col模式下，下左对齐
+.flex-col-bottom-start {
+  @include display-flex(flex-end, flex-start, center);
+}
+
+//col模式下，下中对齐
+.flex-col-bottom-center {
+  @include display-flex(flex-end, center, center);
+}
+
+//col模式下，下右对齐
+.flex-col-bottom-end {
+  @include display-flex(flex-end, flex-end, center);
+}
+
+//-----------
+
+// row居中左对齐
+.flex-start {
+  @include display-flex(flex-start, center, center);
+}
+
+// row居中右对齐
+.flex-end {
+  @include display-flex(flex-end, center, center);
+}
+
+// col,row上下左右居中对齐
+.flex-center {
+  @include display-flex(center, center, center);
+}
+
+// col,row两端对齐
+.flex-between {
+  justify-content: space-between;
+}
+
+//横向的内容在col模式一睥100%宽，与flex-1中的flex-row是功能一样。
+.flex-col-full {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+// col,row居中等分对齐
+.flex-around {
+  justify-content: space-around;
+}
+
+.flex-row-baseline-start {
+  justify-content: flex-start !important;
+  align-items: baseline !important;
+  align-content: center;
+  display: flex !important;
+}
+.flex-row-baseline-center {
+  justify-content: center !important;
+  align-items: baseline !important;
+  align-content: center;
+  display: flex !important;
+}
+.flex-row-baseline-end {
+  justify-content: flex-end !important;
+  align-items: baseline !important;
+  align-content: center;
+  display: flex !important;
+}
+
+@for $i from 0 through 12 {
+  .flex-#{$i} {
+    flex: $i !important;
+  }
+  .flex-grow-#{$i} {
+    flex-grow: $i !important;
+  }
+  .flex-shrink-#{$i} {
+    flex-shrink: $i !important;
+  }
+}
+
+// 定义需要生成的图标尺寸列表
+$icon-sizes: (12, 18, 20, 24, 28, 40);
+@each $size in $icon-sizes {
+  .ico-#{$size} {
+    width: upx($size);
+    min-width: upx($size);
+    height: upx($size);
+    line-height: upx($size);
+  }
+}
+
+.hidden-scroll ::-webkit-scrollbar{
+  display: none;
+  width: 0 !important;
+  height: 0 !important;
+  -webkit-appearance: none;
+  background: transparent;
+}
+
+image {
+  will-change: transform
+}

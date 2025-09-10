@@ -1,0 +1,5664 @@
+openapi: 3.1.0
+info:
+  title: airpig
+  description: ''
+  version: 1.0.0
+tags:
+  - name: 群组接口
+  - name: 用户好友接口
+  - name: 文件管理
+  - name: 腾讯IM统一回调接口
+  - name: 腾讯IM消息接口
+  - name: 语言合成服务
+  - name: 唯一id生成
+  - name: 版本信息接口
+  - name: 翻译
+  - name: 配置相关/用户配置接口
+  - name: 配置相关/用户会话配置
+  - name: 配置相关/群组配置接口
+  - name: 配置相关/系统配置接口
+  - name: 用户管理/微信第三方登录接口
+  - name: 用户管理/用户登录接口
+  - name: 用户管理/小程序登录接口
+  - name: 用户管理/我的管理接口
+  - name: 用户管理/苹果第三方登录接口
+  - name: 语言管理接口
+  - name: 聊天统计
+  - name: 举报审核管理
+  - name: APP版本管理
+  - name: 微信JS-SDK
+  - name: 邀请码管理
+  - name: 支付管理
+  - name: 用户邀请码记录管理
+  - name: 用户词汇管理
+  - name: 微信事件回调接口
+  - name: 腾讯IM查看用户状态
+  - name: 记忆单词接口
+paths:
+  /airpig/api/groups/update:
+    post:
+      summary: 更新群组信息
+      deprecated: false
+      description: 更新群组的名称、头像或公告等信息
+      operationId: updateChatGroup
+      tags:
+        - 群组接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatGroupUpdateForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultChatGroupDTO'
+          headers: {}
+      security: []
+  /airpig/api/groups/quit/{groupId}:
+    post:
+      summary: 退出群组
+      deprecated: false
+      description: 当前用户退出指定群组
+      operationId: quitGroup
+      tags:
+        - 群组接口
+      parameters:
+        - name: groupId
+          in: path
+          description: 群组ID
+          required: true
+          example: 1
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/groups/members/remove:
+    post:
+      summary: 移除群成员
+      deprecated: false
+      description: 从指定群组移除成员（仅群主可操作）
+      operationId: removeGroupMembers
+      tags:
+        - 群组接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatGroupMemberRemoveForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/groups/members/add:
+    post:
+      summary: 添加群成员
+      deprecated: false
+      description: 向指定群组添加成员（仅群主可操作）
+      operationId: addGroupMembers
+      tags:
+        - 群组接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatGroupMemberAddForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/groups/delete/{groupId}:
+    post:
+      summary: 删除群组
+      deprecated: false
+      description: 删除指定的群组（仅群主可操作）
+      operationId: deleteChatGroup
+      tags:
+        - 群组接口
+      parameters:
+        - name: groupId
+          in: path
+          description: 群组ID
+          required: true
+          example: 1
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/groups/create:
+    post:
+      summary: 创建群组
+      deprecated: false
+      description: 创建新的聊天群组
+      operationId: createChatGroup
+      tags:
+        - 群组接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatGroupCreateForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultChatGroupDTO'
+          headers: {}
+      security: []
+  /airpig/api/groups/search:
+    get:
+      summary: 搜索群组列表
+      deprecated: false
+      description: 搜索群组列表
+      operationId: searchGroupList
+      tags:
+        - 群组接口
+      parameters:
+        - name: keyword
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListChatGroupSearchDTO'
+          headers: {}
+      security: []
+  /airpig/api/groups/members/list:
+    get:
+      summary: 获取群成员列表
+      deprecated: false
+      description: 分页获取指定群组的成员列表
+      operationId: getGroupMemberList
+      tags:
+        - 群组接口
+      parameters:
+        - name: groupId
+          in: query
+          description: 群组ID
+          required: false
+          example: 1
+          schema:
+            type: integer
+            description: 群组ID
+            format: int64
+            examples:
+              - 1
+        - name: keyword
+          in: query
+          description: 成员昵称关键词
+          required: false
+          example: 张
+          schema:
+            type: string
+            description: 成员昵称关键词
+            examples:
+              - 张
+        - name: pageNum
+          in: query
+          description: 页码
+          required: false
+          example: 1
+          schema:
+            type: integer
+            description: 页码
+            format: int32
+            examples:
+              - 1
+        - name: pageSize
+          in: query
+          description: 每页数量
+          required: false
+          example: 10
+          schema:
+            type: integer
+            description: 每页数量
+            format: int32
+            examples:
+              - 10
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListChatGroupMemberDTO'
+          headers: {}
+      security: []
+  /airpig/api/groups/list:
+    get:
+      summary: 获取群组列表
+      deprecated: false
+      description: 分页获取当前用户所在的群组列表
+      operationId: getChatGroupList
+      tags:
+        - 群组接口
+      parameters:
+        - name: keyword
+          in: query
+          description: 群组名称关键词
+          required: false
+          example: 技术
+          schema:
+            type: string
+            description: 群组名称关键词
+            examples:
+              - 技术
+        - name: pageNum
+          in: query
+          description: 页码
+          required: false
+          example: 1
+          schema:
+            type: integer
+            description: 页码
+            format: int32
+            examples:
+              - 1
+        - name: pageSize
+          in: query
+          description: 每页数量
+          required: false
+          example: 10
+          schema:
+            type: integer
+            description: 每页数量
+            format: int32
+            examples:
+              - 10
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListChatGroupDTO'
+          headers: {}
+      security: []
+  /airpig/api/groups/detail/{groupId}:
+    get:
+      summary: 获取群组详情
+      deprecated: false
+      description: 获取指定群组的详细信息
+      operationId: getChatGroupDetail
+      tags:
+        - 群组接口
+      parameters:
+        - name: groupId
+          in: path
+          description: 群组ID
+          required: true
+          example: 1
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultChatGroupDTO'
+          headers: {}
+      security: []
+  /airpig/api/friends/{friendUserId}:
+    post:
+      summary: 删除好友
+      deprecated: false
+      description: 删除指定好友关系
+      operationId: deleteFriend
+      tags:
+        - 用户好友接口
+      parameters:
+        - name: friendUserId
+          in: path
+          description: 好友用户ID
+          required: true
+          example: 2
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/friends/requests/handle:
+    post:
+      summary: 处理好友请求
+      deprecated: false
+      description: 接受或拒绝好友请求
+      operationId: handleFriendRequest
+      tags:
+        - 用户好友接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FriendRequestHandleForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/friends/request/send:
+    post:
+      summary: 发送好友请求
+      deprecated: false
+      description: 向指定用户发送好友请求
+      operationId: sendFriendRequest
+      tags:
+        - 用户好友接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FriendRequestForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/friends/remark:
+    post:
+      summary: 修改好友备注
+      deprecated: false
+      description: 修改指定好友的备注名
+      operationId: updateFriendRemark
+      tags:
+        - 用户好友接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FriendRemarkForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/friends/search:
+    get:
+      summary: 搜索用户
+      deprecated: false
+      description: 通过关键词搜索用户，用于添加好友
+      operationId: searchUsers
+      tags:
+        - 用户好友接口
+      parameters:
+        - name: keyword
+          in: query
+          description: 关键词（用户名/昵称/手机号）
+          required: false
+          example: 张三
+          schema:
+            type: string
+            description: 关键词（用户名/昵称/手机号）
+            examples:
+              - 张三
+        - name: pageNum
+          in: query
+          description: 页码
+          required: false
+          example: 1
+          schema:
+            type: integer
+            description: 页码
+            format: int32
+            examples:
+              - 1
+        - name: pageSize
+          in: query
+          description: 每页数量
+          required: false
+          example: 10
+          schema:
+            type: integer
+            description: 每页数量
+            format: int32
+            examples:
+              - 10
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListUserSearchDTO'
+          headers: {}
+      security: []
+  /airpig/api/friends/request/list:
+    get:
+      summary: 获取好友请求列表
+      deprecated: false
+      description: 分页获取当前用户的好友请求列表
+      operationId: getFriendRequestList
+      tags:
+        - 用户好友接口
+      parameters:
+        - name: userId
+          in: query
+          description: 用户ID
+          required: false
+          example: 1
+          schema:
+            type: integer
+            description: 用户ID
+            format: int64
+            examples:
+              - 1
+        - name: status
+          in: query
+          description: 请求状态：0-待处理，1-已接受，2-已拒绝
+          required: false
+          example: 0
+          schema:
+            type: integer
+            description: 请求状态：0-待处理，1-已接受，2-已拒绝
+            format: int32
+            examples:
+              - 0
+        - name: pageNum
+          in: query
+          description: 页码
+          required: false
+          example: 1
+          schema:
+            type: integer
+            description: 页码
+            format: int32
+            examples:
+              - 1
+        - name: pageSize
+          in: query
+          description: 每页数量
+          required: false
+          example: 10
+          schema:
+            type: integer
+            description: 每页数量
+            format: int32
+            examples:
+              - 10
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListFriendRequestDTO'
+          headers: {}
+      security: []
+  /airpig/api/friends/list:
+    get:
+      summary: 获取好友列表
+      deprecated: false
+      description: 分页获取当前用户的好友列表
+      operationId: getFriendList
+      tags:
+        - 用户好友接口
+      parameters:
+        - name: userId
+          in: query
+          description: 用户ID
+          required: false
+          example: 1
+          schema:
+            type: integer
+            description: 用户ID
+            format: int64
+            examples:
+              - 1
+        - name: keyword
+          in: query
+          description: 好友昵称关键词
+          required: false
+          example: 张三
+          schema:
+            type: string
+            description: 好友昵称关键词
+            examples:
+              - 张三
+        - name: pageNum
+          in: query
+          description: 页码
+          required: false
+          example: 1
+          schema:
+            type: integer
+            description: 页码
+            format: int32
+            examples:
+              - 1
+        - name: pageSize
+          in: query
+          description: 每页数量
+          required: false
+          example: 10
+          schema:
+            type: integer
+            description: 每页数量
+            format: int32
+            examples:
+              - 10
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListFriendDTO'
+          headers: {}
+      security: []
+  /airpig/api/file/upload:
+    post:
+      summary: 单文件上传
+      deprecated: false
+      description: 单文件上传
+      operationId: uploadFile
+      tags:
+        - 文件管理
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultString'
+          headers: {}
+      security: []
+  /airpig/api/callback/tencent/im:
+    post:
+      summary: 统一回调接口
+      deprecated: false
+      description: 处理所有腾讯IM回调请求的单一入口，采用异步处理方式
+      operationId: handleUnifiedCallback
+      tags:
+        - 腾讯IM统一回调接口
+      parameters:
+        - name: SdkAppid
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: Sign
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: RequestTime
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+              properties: {}
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/im/messages/group:
+    get:
+      summary: 查询群聊历史消息
+      deprecated: false
+      description: 根据条件查询群聊历史消息，包含消息已读状态和已读人数
+      operationId: queryGroupMessages
+      tags:
+        - 腾讯IM消息接口
+      parameters:
+        - name: groupID
+          in: query
+          description: 群组ID
+          required: true
+          example: ''
+          schema:
+            type: string
+            description: 群组ID
+        - name: sequence
+          in: query
+          description: 序列号
+          required: false
+          example: 0
+          schema:
+            type: integer
+            description: 序列号
+            format: int64
+        - name: count
+          in: query
+          description: 条数
+          required: false
+          example: 0
+          schema:
+            type: integer
+            description: 条数
+            format: int32
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultGroupChatData'
+          headers: {}
+      security: []
+  /airpig/api/im/messages/c2c:
+    get:
+      summary: 查询单聊历史消息
+      deprecated: false
+      description: 根据条件查询单聊历史消息，包含消息已读状态
+      operationId: queryC2CMessages
+      tags:
+        - 腾讯IM消息接口
+      parameters:
+        - name: peerAccount
+          in: query
+          description: 接收方用户ID
+          required: false
+          example: ''
+          schema:
+            type: string
+            description: 接收方用户ID
+        - name: messageKey
+          in: query
+          description: 消息索引键
+          required: false
+          example: ''
+          schema:
+            type: string
+            description: 消息索引键
+        - name: lastMessageTime
+          in: query
+          description: 上次消息时间戳
+          required: false
+          example: 0
+          schema:
+            type: integer
+            description: 上次消息时间戳
+            format: int64
+        - name: count
+          in: query
+          description: 请求消息数量
+          required: false
+          example: 0
+          schema:
+            type: integer
+            description: 请求消息数量
+            format: int32
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultSingleChatData'
+          headers: {}
+      security: []
+  /airpig/api/tts/convert:
+    post:
+      summary: 文字转音频文件url（同步方式）
+      deprecated: false
+      description: ''
+      operationId: convertTextToSpeech
+      tags:
+        - 语言合成服务
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TextToSpeechForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultObject'
+          headers: {}
+      security: []
+  /airpig/api/tts/convert/async:
+    post:
+      summary: 文字转音频文件url（异步方式）
+      deprecated: false
+      description: ''
+      operationId: convertTextToSpeechAsync
+      tags:
+        - 语言合成服务
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TextToSpeechForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultObject'
+          headers: {}
+      security: []
+  /airpig/api/uniqueId/generate:
+    get:
+      summary: 生成唯一ID
+      deprecated: false
+      description: ''
+      operationId: generateUniqueId
+      tags:
+        - 唯一id生成
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultString'
+          headers: {}
+      security: []
+  /airpig/api/uniqueId/generate/{prefix}:
+    get:
+      summary: 生成指定前缀的唯一ID
+      deprecated: false
+      description: ''
+      operationId: generateUniqueIdWithPrefix
+      tags:
+        - 唯一id生成
+      parameters:
+        - name: prefix
+          in: path
+          description: ''
+          required: true
+          example: ''
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultString'
+          headers: {}
+      security: []
+  /airpig/api/version/get:
+    get:
+      summary: 获取版本信息列表
+      deprecated: false
+      description: ''
+      operationId: listVersions
+      tags:
+        - 版本信息接口
+      parameters:
+        - name: version
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /airpig/api/translate:
+    post:
+      summary: 翻译
+      deprecated: false
+      description: 对原文进行翻译
+      operationId: translate
+      tags:
+        - 翻译
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TranslateForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultTranslateDTO'
+          headers: {}
+      security: []
+  /airpig/api/user/config/set:
+    post:
+      summary: 设置用户配置
+      deprecated: false
+      description: ''
+      operationId: setUserConfig
+      tags:
+        - 配置相关/用户配置接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserConfigForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /airpig/api/user/config/list:
+    get:
+      summary: 获取用户所有配置
+      deprecated: false
+      description: ''
+      operationId: getUserConfigs
+      tags:
+        - 配置相关/用户配置接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListUserConfigDTO'
+          headers: {}
+      security: []
+  /airpig/api/user/config/get:
+    get:
+      summary: 获取用户指定配置
+      deprecated: false
+      description: ''
+      operationId: getUserConfig
+      tags:
+        - 配置相关/用户配置接口
+      parameters:
+        - name: configKey
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultString'
+          headers: {}
+      security: []
+  /airpig/api/user/config/delete:
+    delete:
+      summary: 删除用户配置
+      deprecated: false
+      description: ''
+      operationId: deleteUserConfig
+      tags:
+        - 配置相关/用户配置接口
+      parameters:
+        - name: configKey
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /airpig/api/c2c/config/set:
+    post:
+      summary: 设置用户对用户配置
+      deprecated: false
+      description: ''
+      operationId: setC2CConfig
+      tags:
+        - 配置相关/用户会话配置
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/C2CConfigForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /airpig/api/c2c/config/{toUserId}:
+    get:
+      summary: 获取用户对用户所有配置
+      deprecated: false
+      description: ''
+      operationId: getAllC2CConfigs
+      tags:
+        - 配置相关/用户会话配置
+      parameters:
+        - name: toUserId
+          in: path
+          description: ''
+          required: true
+          example: 0
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListC2CConfigDTO'
+          headers: {}
+      security: []
+  /airpig/api/c2c/config/{toUserId}/{configKey}:
+    get:
+      summary: 获取用户对用户配置
+      deprecated: false
+      description: ''
+      operationId: getC2CConfig
+      tags:
+        - 配置相关/用户会话配置
+      parameters:
+        - name: toUserId
+          in: path
+          description: ''
+          required: true
+          example: 0
+          schema:
+            type: integer
+            format: int64
+        - name: configKey
+          in: path
+          description: ''
+          required: true
+          example: ''
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultString'
+          headers: {}
+      security: []
+    delete:
+      summary: 删除用户对用户配置
+      deprecated: false
+      description: ''
+      operationId: deleteC2CConfig
+      tags:
+        - 配置相关/用户会话配置
+      parameters:
+        - name: toUserId
+          in: path
+          description: ''
+          required: true
+          example: 0
+          schema:
+            type: integer
+            format: int64
+        - name: configKey
+          in: path
+          description: ''
+          required: true
+          example: ''
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /airpig/api/group/config/set:
+    post:
+      summary: 设置群组配置
+      deprecated: false
+      description: ''
+      operationId: setGroupConfig
+      tags:
+        - 配置相关/群组配置接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupConfigForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /airpig/api/group/config/{imGroupId}:
+    get:
+      summary: 获取群组所有配置
+      deprecated: false
+      description: ''
+      operationId: getGroupAllConfigs
+      tags:
+        - 配置相关/群组配置接口
+      parameters:
+        - name: imGroupId
+          in: path
+          description: ''
+          required: true
+          example: ''
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListGroupConfigDTO'
+          headers: {}
+      security: []
+  /airpig/api/group/config/{imGroupId}/{configKey}:
+    get:
+      summary: 获取群组配置
+      deprecated: false
+      description: ''
+      operationId: getGroupConfig
+      tags:
+        - 配置相关/群组配置接口
+      parameters:
+        - name: imGroupId
+          in: path
+          description: ''
+          required: true
+          example: ''
+          schema:
+            type: string
+        - name: configKey
+          in: path
+          description: ''
+          required: true
+          example: ''
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultString'
+          headers: {}
+      security: []
+    delete:
+      summary: 删除群组配置
+      deprecated: false
+      description: ''
+      operationId: deleteGroupConfig
+      tags:
+        - 配置相关/群组配置接口
+      parameters:
+        - name: imGroupId
+          in: path
+          description: ''
+          required: true
+          example: ''
+          schema:
+            type: string
+        - name: configKey
+          in: path
+          description: ''
+          required: true
+          example: ''
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /airpig/api/system/config/list:
+    get:
+      summary: 获取所有系统配置列表
+      deprecated: false
+      description: ''
+      operationId: getAllSystemConfigs
+      tags:
+        - 配置相关/系统配置接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListSystemConfig'
+          headers: {}
+      security: []
+  /airpig/api/wechat/auth/login:
+    post:
+      summary: 微信第三方登录
+      deprecated: false
+      description: 通过微信授权code登录，成功后返回用户信息和token
+      operationId: login
+      tags:
+        - 用户管理/微信第三方登录接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WechatAuthLoginForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultUserLoginDTO'
+          headers: {}
+      security: []
+  /airpig/api/user/sms/login:
+    post:
+      summary: 短信验证码登录
+      deprecated: false
+      description: 通过手机号和验证码登录，成功后返回用户信息和token
+      operationId: smsLogin
+      tags:
+        - 用户管理/用户登录接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SmsLoginForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultUserLoginDTO'
+          headers: {}
+      security: []
+  /airpig/api/user/sms/code:
+    post:
+      summary: 发送短信验证码
+      deprecated: false
+      description: 向指定手机号发送验证码，通过type参数区分不同场景
+      operationId: sendSmsCode
+      tags:
+        - 用户管理/用户登录接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SmsSendForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/user/logout:
+    post:
+      summary: 退出登录接口
+      deprecated: false
+      description: 退出登录接口
+      operationId: logout
+      tags:
+        - 用户管理/用户登录接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/user/login:
+    post:
+      summary: 用户名密码登录
+      deprecated: false
+      description: 通过用户名和密码登录，成功后返回用户信息和token
+      operationId: login_1
+      tags:
+        - 用户管理/用户登录接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultUserLoginDTO'
+          headers: {}
+      security: []
+  /airpig/api/user/deactivate:
+    post:
+      summary: 注销账号
+      deprecated: false
+      description: 注销当前用户账号，注销后无法再次登录，需要重新注册
+      operationId: deactivateAccount
+      tags:
+        - 用户管理/用户登录接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/mini/phone:
+    post:
+      summary: 获取微信用户手机号
+      deprecated: false
+      description: 通过微信小程序获取用户手机号接口返回的code获取手机号
+      operationId: getPhoneNumber
+      tags:
+        - 用户管理/小程序登录接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WechatPhoneForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultMapStringString'
+          headers: {}
+      security: []
+  /airpig/api/mini/login:
+    post:
+      summary: 微信小程序登录
+      deprecated: false
+      description: 通过微信小程序code登录，成功后返回用户信息和token
+      operationId: login_2
+      tags:
+        - 用户管理/小程序登录接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WechatMiniLoginForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultUserLoginDTO'
+          headers: {}
+      security: []
+  /airpig/api/mini/login/out:
+    post:
+      summary: 退出登录接口
+      deprecated: false
+      description: 退出登录接口
+      operationId: loginOut
+      tags:
+        - 用户管理/小程序登录接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/mini/im/user/sig:
+    get:
+      summary: 获取腾讯IM用户签名
+      deprecated: false
+      description: 获取腾讯IM用户的UserSig签名信息
+      operationId: getUserSig
+      tags:
+        - 用户管理/小程序登录接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultTencentImUserDTO'
+          headers: {}
+      security: []
+  /airpig/api/mini/code2user:
+    get:
+      summary: 通过code 换取用户信息
+      deprecated: false
+      description: 通过code换取用户信息
+      operationId: code2user
+      tags:
+        - 用户管理/小程序登录接口
+      parameters:
+        - name: code
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultUserLoginDTO'
+          headers: {}
+      security: []
+  /airpig/api/my/profile/update:
+    post:
+      summary: 修改个人资料
+      deprecated: false
+      description: 修改个人资料
+      operationId: update
+      tags:
+        - 用户管理/我的管理接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MyProfileForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVoid'
+          headers: {}
+      security: []
+  /airpig/api/my/profile/phone/update:
+    post:
+      summary: 修改手机号
+      deprecated: false
+      description: 修改手机号，只需验证新手机号
+      operationId: updatePhone
+      tags:
+        - 用户管理/我的管理接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhoneUpdateForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /airpig/api/my/profile/phone/bind:
+    post:
+      summary: 绑定手机号
+      deprecated: false
+      description: 绑定手机号
+      operationId: bindPhone
+      tags:
+        - 用户管理/我的管理接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhoneBindForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultUserLoginDTO'
+          headers: {}
+      security: []
+  /airpig/api/my/profile/detail:
+    get:
+      summary: 查询个人资料
+      deprecated: false
+      description: 查询个人资料
+      operationId: detail
+      tags:
+        - 用户管理/我的管理接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultMyProfileDTO'
+          headers: {}
+      security: []
+  /airpig/api/apple/auth/login:
+    post:
+      summary: 苹果第三方登录
+      deprecated: false
+      description: 通过苹果授权identityToken登录，成功后返回用户信息和token
+      operationId: login_3
+      tags:
+        - 用户管理/苹果第三方登录接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppleAuthLoginForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultUserLoginDTO'
+          headers: {}
+      security: []
+  /airpig/api/language/list:
+    get:
+      summary: 获取所有语言列表
+      deprecated: false
+      description: ''
+      operationId: getAllLanguages
+      tags:
+        - 语言管理接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListLanguage'
+          headers: {}
+      security: []
+  /api/chat-statistics/status:
+    get:
+      summary: 检查导出服务状态
+      deprecated: false
+      description: 检查聊天统计数据导出服务是否正常运行
+      operationId: checkStatus
+      tags:
+        - 聊天统计
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultString'
+          headers: {}
+      security: []
+  /api/chat-statistics/export:
+    get:
+      summary: 导出聊天统计数据
+      deprecated: false
+      description: 导出指定日期范围内的聊天统计数据，返回CSV文件
+      operationId: exportChatStatistics
+      tags:
+        - 聊天统计
+      parameters:
+        - name: startDate
+          in: query
+          description: 开始日期（格式：yyyy-MM-dd）
+          required: true
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          description: 结束日期（格式：yyyy-MM-dd）
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+          headers: {}
+      security: []
+  /airpig/api/user/report:
+    post:
+      summary: 用户举报
+      deprecated: false
+      description: 通过CreateReportForm创建用户举报
+      operationId: CreateReport
+      tags:
+        - 举报审核管理
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReportForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /airpig/api/app/version/check:
+    post:
+      summary: 检查APP版本更新
+      deprecated: false
+      description: 检查当前APP版本是否需要更新
+      operationId: checkVersion
+      tags:
+        - APP版本管理
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppVersionCheckForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultAppVersionCheckDTO'
+          headers: {}
+      security: []
+  /airpig/api/wechat/jssdk/js-config:
+    get:
+      summary: 获取微信JS-SDK配置
+      deprecated: false
+      description: 获取微信JS-SDK配置信息，用于H5页面分享
+      operationId: getJsConfig
+      tags:
+        - 微信JS-SDK
+      parameters:
+        - name: url
+          in: query
+          description: 当前页面URL
+          required: true
+          example: https://yourdomain.com/page
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultWechatJsConfigDTO'
+          headers: {}
+      security: []
+  /airpig/api/Invitation/use:
+    get:
+      summary: 使用注册邀请码
+      deprecated: false
+      description: ''
+      operationId: useInvitation
+      tags:
+        - 邀请码管理
+      parameters:
+        - name: code
+          in: query
+          description: 邀请码
+          required: true
+          example: ''
+          schema:
+            type: string
+            description: 邀请码
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /airpig/api/Invitation/get:
+    get:
+      summary: 获取注册邀请码
+      deprecated: false
+      description: ''
+      operationId: getInvitation
+      tags:
+        - 邀请码管理
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultRegisterInvitationDTO'
+          headers: {}
+      security: []
+  /api/payment/refund/{paymentOrderNo}:
+    post:
+      summary: 申请退款
+      deprecated: false
+      description: 对已支付订单申请退款，支持全额退款
+      operationId: refundPayment
+      tags:
+        - 支付管理
+      parameters:
+        - name: paymentOrderNo
+          in: path
+          description: 支付订单号
+          required: true
+          example: ''
+          schema:
+            type: string
+        - name: reason
+          in: query
+          description: 退款原因
+          required: false
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /api/payment/create:
+    post:
+      summary: 创建支付订单
+      deprecated: false
+      description: 创建微信、支付宝或苹果支付订单，返回支付参数
+      operationId: createPayment
+      tags:
+        - 支付管理
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreateForm'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultPaymentResultDTO'
+          headers: {}
+      security: []
+  /api/payment/cancel/{paymentOrderNo}:
+    post:
+      summary: 取消支付订单
+      deprecated: false
+      description: 取消未支付的订单，关闭第三方支付订单
+      operationId: cancelPayment
+      tags:
+        - 支付管理
+      parameters:
+        - name: paymentOrderNo
+          in: path
+          description: 支付订单号
+          required: true
+          example: ''
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /api/payment/callback/wechat:
+    post:
+      summary: 微信支付回调
+      deprecated: false
+      description: 处理微信的支付结果通知
+      operationId: wechatPayCallback
+      tags:
+        - 支付管理
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+          headers: {}
+      security: []
+  /api/payment/callback/apple:
+    post:
+      summary: 苹果支付验证回调
+      deprecated: false
+      description: 处理苹果内购的验证回调
+      operationId: applePayCallback
+      tags:
+        - 支付管理
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplePaymentVerifyForm'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /api/payment/callback/alipay:
+    post:
+      summary: 支付宝支付回调
+      deprecated: false
+      description: 处理支付宝的支付结果通知
+      operationId: alipayCallback
+      tags:
+        - 支付管理
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+          headers: {}
+      security: []
+  /api/payment/return/alipay:
+    get:
+      summary: 支付宝同步返回
+      deprecated: false
+      description: 处理支付宝支付完成后的同步跳转
+      operationId: alipayReturn
+      tags:
+        - 支付管理
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+          headers: {}
+      security: []
+  /api/payment/records:
+    get:
+      summary: 获取支付记录
+      deprecated: false
+      description: 分页获取当前用户的支付记录列表
+      operationId: getPaymentRecords
+      tags:
+        - 支付管理
+      parameters:
+        - name: page
+          in: query
+          description: 页码，从1开始
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: size
+          in: query
+          description: 每页数量，最大100
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListPaymentRecord'
+          headers: {}
+      security: []
+  /api/payment/query/{paymentOrderNo}:
+    get:
+      summary: 查询支付订单
+      deprecated: false
+      description: 根据支付订单号查询支付状态和详细信息
+      operationId: queryPayment
+      tags:
+        - 支付管理
+      parameters:
+        - name: paymentOrderNo
+          in: path
+          description: 支付订单号
+          required: true
+          example: ''
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultPaymentResultDTO'
+          headers: {}
+        '404':
+          description: 订单不存在
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultPaymentResultDTO'
+          headers: {}
+        '500':
+          description: 服务器内部错误
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultPaymentResultDTO'
+          headers: {}
+      security: []
+  /airpig/api/Invitation/getuse:
+    get:
+      summary: 用户获取邀请情况
+      deprecated: false
+      description: ''
+      operationId: getUserInvitation
+      tags:
+        - 用户邀请码记录管理
+      parameters:
+        - name: pageNum
+          in: query
+          description: ''
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          description: ''
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListGetUseInvitationDTO'
+          headers: {}
+      security: []
+  /airpig/api/user/vocabulary/add:
+    post:
+      summary: 用户添加词汇
+      deprecated: false
+      description: 添加新的词汇到用户词汇表
+      operationId: addUserVocabulary
+      tags:
+        - 用户词汇管理
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddUserVocabularyForm'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /airpig/api/user/vocabulary/search:
+    get:
+      summary: 搜索词汇
+      deprecated: false
+      description: 根据关键词搜索用户词汇
+      operationId: searchUserVocabulary
+      tags:
+        - 用户词汇管理
+      parameters:
+        - name: keyword
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: current
+          in: query
+          description: ''
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: size
+          in: query
+          description: ''
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultPageUserVocabulary'
+          headers: {}
+      security: []
+  /api/wechat/mp/airpig/api/mp/callback:
+    get:
+      summary: 微信服务器验证
+      deprecated: false
+      description: 用于验证微信服务器配置的有效性，验证成功返回echostr
+      operationId: verifyServer
+      tags:
+        - 微信事件回调接口
+      parameters:
+        - name: signature
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: nonce
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: echostr
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+          headers: {}
+      security: []
+    post:
+      summary: 微信事件回调
+      deprecated: false
+      description: 处理微信推送的用户关注、取消关注等事件回调
+      operationId: handleWechatEvent
+      tags:
+        - 微信事件回调接口
+      parameters:
+        - name: signature
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: nonce
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              type: string
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/xml:
+              schema:
+                type: string
+          headers: {}
+      security: []
+  /airpig/api/api/tencent/im/query-online-status:
+    get:
+      summary: queryUserOnlineStatus
+      deprecated: false
+      description: ''
+      operationId: queryUserOnlineStatus
+      tags:
+        - 腾讯IM查看用户状态
+      parameters:
+        - name: userIds
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                properties: {}
+          headers: {}
+      security: []
+    post:
+      summary: queryUserOnlineStatusPost
+      deprecated: false
+      description: ''
+      operationId: queryUserOnlineStatusPost
+      tags:
+        - 腾讯IM查看用户状态
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryOnlineStatusRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                properties: {}
+          headers: {}
+      security: []
+  /airpig/api/memo/user/word/match:
+    post:
+      summary: 用户新增词搭
+      deprecated: false
+      description: ''
+      operationId: addVocabulary
+      tags:
+        - 记忆单词接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WordSelectionForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /airpig/api/memo/user/swipe:
+    post:
+      summary: 用户刷词卡
+      deprecated: false
+      description: ''
+      operationId: swipeVocabulary
+      tags:
+        - 记忆单词接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SwipeWordCardsForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultBoolean'
+          headers: {}
+      security: []
+  /airpig/api/memo/analysis:
+    post:
+      summary: AI分析单词返回完整词汇信息
+      deprecated: false
+      description: ''
+      operationId: aIAnalysis
+      tags:
+        - 记忆单词接口
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WordAnalysisForm'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultVocabularyAnalysisDTO'
+          headers: {}
+      security: []
+  /airpig/api/memo/memo/list:
+    get:
+      summary: 获取所有词汇列表
+      deprecated: false
+      description: ''
+      operationId: getAllVocabulary
+      tags:
+        - 记忆单词接口
+      parameters:
+        - name: w
+          in: query
+          description: |-
+            卷王专属(天天复习、冲刺型选手)这个按钮对应的是W=3
+            节奏大师(每周两三次，稳中求进选手)     这个按钮对应的是W=7
+            摆烂天尊(半个月两三次，佛系随缘选手)   这个按钮对应的是W=14
+          required: false
+          example: 0
+          schema:
+            type: integer
+            description: |-
+              卷王专属(天天复习、冲刺型选手)这个按钮对应的是W=3
+              节奏大师(每周两三次，稳中求进选手)     这个按钮对应的是W=7
+              摆烂天尊(半个月两三次，佛系随缘选手)   这个按钮对应的是W=14
+            format: int32
+        - name: pageNum
+          in: query
+          description: 页码（从1开始）
+          required: false
+          example: 1
+          schema:
+            type: integer
+            description: 页码（从1开始）
+            format: int32
+            examples:
+              - 1
+        - name: pageSize
+          in: query
+          description: 每页大小
+          required: false
+          example: 10
+          schema:
+            type: integer
+            description: 每页大小
+            format: int32
+            examples:
+              - 10
+        - name: Authorization
+          in: header
+          description: ''
+          example: Bearer {{token}}
+          schema:
+            type: string
+            default: Bearer {{token}}
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultListWordCardDTO'
+          headers: {}
+      security: []
+webhooks: {}
+components:
+  schemas:
+    WechatPhoneForm:
+      required:
+        - code
+      type: object
+      properties:
+        code:
+          type: string
+          description: 微信小程序获取手机号临时凭证
+      description: 微信小程序获取手机号表单
+    ResultMapStringString:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: object
+          additionalProperties:
+            type: string
+          properties: {}
+        total:
+          type: integer
+          format: int64
+    WechatMiniLoginForm:
+      required:
+        - code
+        - phoneCode
+      type: object
+      properties:
+        code:
+          type: string
+          description: 微信小程序临时登录凭证
+        phoneCode:
+          type: string
+          description: 获取手机号的code
+        nickname:
+          type: string
+          description: 昵称
+        avatarUrl:
+          type: string
+          description: 头像URL
+        gender:
+          type: integer
+          description: 性别：0未知，1男，2女
+          format: int32
+      description: 微信小程序登录表单
+    ResultUserLoginDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/UserLoginDTO'
+        total:
+          type: integer
+          format: int64
+    UserLoginDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+          description: 用户ID
+          format: int64
+        username:
+          type: string
+          description: 用户名
+        nickname:
+          type: string
+          description: 昵称
+        avatarUrl:
+          type: string
+          description: 头像URL
+        phone:
+          type: string
+          description: 手机号
+        gender:
+          type: integer
+          description: 性别：0未知，1男，2女
+          format: int32
+        token:
+          type: string
+          description: 登录令牌
+        userSig:
+          type: string
+          description: 签名
+        sdkAppId:
+          type: integer
+          description: sdkAppId
+          format: int64
+        isWhiteUser:
+          type: boolean
+          description: 是否白名单用户
+        isOfficialAccount:
+          type: boolean
+      description: 用户登录返回信息
+    ChatGroupUpdateForm:
+      required:
+        - groupId
+      type: object
+      properties:
+        groupId:
+          type: integer
+          description: 群组ID
+          format: int64
+        groupName:
+          maxLength: 30
+          minLength: 0
+          type: string
+          description: 群组名称
+        avatarUrl:
+          type: string
+          description: 群头像URL
+        announcement:
+          type: string
+          description: 群公告
+      description: 更新群组表单
+    ChatGroupDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 群组ID
+          format: int64
+        imGroupId:
+          type: string
+          description: 群组IMID
+        groupName:
+          type: string
+          description: 群组名称
+        avatarUrl:
+          type: string
+          description: 群头像URL
+        creatorId:
+          type: integer
+          description: 创建人ID
+          format: int64
+        creatorNickname:
+          type: string
+          description: 创建人昵称
+        announcement:
+          type: string
+          description: 群公告
+        memberCount:
+          type: integer
+          description: 成员数量
+          format: int64
+        userRole:
+          type: string
+          description: 当前用户在群中的角色
+        createdAt:
+          type: string
+          description: 创建时间
+          format: date-time
+      description: 群组信息DTO
+    ResultChatGroupDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/ChatGroupDTO'
+        total:
+          type: integer
+          format: int64
+    ResultVoid:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: object
+          properties: {}
+        total:
+          type: integer
+          format: int64
+    ChatGroupMemberRemoveForm:
+      required:
+        - groupId
+        - memberIds
+      type: object
+      properties:
+        groupId:
+          type: integer
+          description: 群组ID
+          format: int64
+        memberIds:
+          type: array
+          description: 成员ID列表
+          items:
+            type: integer
+            description: 成员ID列表
+            format: int64
+      description: 移除群组成员表单
+    ChatGroupMemberAddForm:
+      required:
+        - groupId
+        - memberIds
+      type: object
+      properties:
+        groupId:
+          type: integer
+          description: 群组ID
+          format: int64
+        memberIds:
+          type: array
+          description: 成员ID列表
+          items:
+            type: integer
+            description: 成员ID列表
+            format: int64
+      description: 添加群组成员表单
+    ChatGroupCreateForm:
+      required:
+        - groupName
+      type: object
+      properties:
+        groupName:
+          maxLength: 30
+          minLength: 0
+          type: string
+          description: 群组名称
+        avatarUrl:
+          type: string
+          description: 群头像URL
+        announcement:
+          type: string
+          description: 群公告
+        memberIds:
+          type: array
+          description: 初始成员ID列表
+          items:
+            type: integer
+            description: 初始成员ID列表
+            format: int64
+      description: 创建群组表单
+    FriendRequestHandleForm:
+      required:
+        - action
+        - requestId
+      type: object
+      properties:
+        requestId:
+          type: integer
+          description: 好友请求ID
+          format: int64
+        action:
+          type: integer
+          description: 处理结果：1-接受，2-拒绝
+          format: int32
+      description: 好友请求处理表单
+    FriendRequestForm:
+      required:
+        - toUserId
+      type: object
+      properties:
+        toUserId:
+          type: integer
+          description: 接收者用户ID
+          format: int64
+        remark:
+          type: string
+          description: 请求备注
+      description: 好友请求表单
+    FriendRemarkForm:
+      required:
+        - friendUserId
+        - remark
+      type: object
+      properties:
+        friendUserId:
+          type: integer
+          description: 好友用户ID
+          format: int64
+        remark:
+          type: string
+          description: 新备注名
+      description: 好友备注修改表单
+    ResultTencentImUserDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/TencentImUserDTO'
+        total:
+          type: integer
+          format: int64
+    TencentImUserDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+          description: 用户ID
+          format: int64
+        userSig:
+          type: string
+          description: 用户签名
+        nickname:
+          type: string
+          description: 昵称
+        avatarUrl:
+          type: string
+          description: 头像URL
+      description: 腾讯IM用户信息
+    GroupMessageQuery:
+      required:
+        - groupID
+      type: object
+      properties:
+        groupID:
+          type: string
+          description: 群组ID
+        sequence:
+          type: integer
+          description: 序列号
+          format: int64
+        count:
+          type: integer
+          description: 条数
+          format: int32
+      description: 群聊消息查询条件
+    GroupMessage:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 消息ID
+        groupId:
+          type: string
+          description: 群组ID
+        fromAccount:
+          type: string
+          description: 发送方用户ID
+        msgBody:
+          type: string
+          description: 消息内容
+        translatedContent:
+          type: string
+          description: 翻译后的内容
+        parsedContent:
+          type: object
+          description: 解析后的消息内容对象
+          properties: {}
+        msgType:
+          type: string
+          description: 消息类型
+        msgSeq:
+          type: integer
+          description: 消息序列号
+          format: int64
+        msgRandom:
+          type: integer
+          description: 消息随机数
+          format: int64
+        msgTime:
+          type: integer
+          description: 消息时间戳
+          format: int64
+        sendTime:
+          type: string
+          description: 消息发送时间
+          format: date-time
+        cloudCustomData:
+          type: string
+          description: 消息云自定义数据
+        offlinePushInfo:
+          type: object
+          additionalProperties:
+            type: object
+            description: 消息离线推送信息
+          description: 消息离线推送信息
+          properties: {}
+        groupMemberAccounts:
+          type: array
+          description: 群消息接收者列表
+          items:
+            type: string
+            description: 群消息接收者列表
+        deleteStatus:
+          type: integer
+          description: 删除状态，0-未删除，1-已删除
+          format: int32
+        createTime:
+          type: string
+          description: 创建时间
+          format: date-time
+        updateTime:
+          type: string
+          description: 更新时间
+          format: date-time
+      description: 腾讯IM群聊消息文档
+    ResultListGroupMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupMessage'
+        total:
+          type: integer
+          format: int64
+    C2CMessageQuery:
+      type: object
+      properties:
+        peerAccount:
+          type: string
+          description: 接收方用户ID
+        messageKey:
+          type: string
+          description: 消息索引键
+        lastMessageTime:
+          type: integer
+          description: 上次消息时间戳
+          format: int64
+        count:
+          type: integer
+          description: 请求消息数量
+          format: int32
+      description: 单聊消息查询条件
+    C2CMessage:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 消息ID
+        fromAccount:
+          type: string
+          description: 发送方用户ID
+        toAccount:
+          type: string
+          description: 接收方用户ID
+        msgBody:
+          type: string
+          description: 消息内容
+        msgType:
+          type: string
+          description: 消息类型
+        msgSeq:
+          type: integer
+          description: 消息序列号
+          format: int64
+        msgRandom:
+          type: integer
+          description: 消息随机数
+          format: int64
+        msgTime:
+          type: integer
+          description: 消息时间戳
+          format: int64
+        sendTime:
+          type: string
+          description: 消息发送时间
+          format: date-time
+        cloudCustomData:
+          type: string
+          description: 消息云自定义数据
+        offlinePushInfo:
+          type: object
+          additionalProperties:
+            type: object
+            description: 消息离线推送信息
+          description: 消息离线推送信息
+          properties: {}
+        deleteStatus:
+          type: integer
+          description: 删除状态，0-未删除，1-已删除
+          format: int32
+        createTime:
+          type: string
+          description: 创建时间
+          format: date-time
+        updateTime:
+          type: string
+          description: 更新时间
+          format: date-time
+      description: 腾讯IM单聊消息文档
+    ResultListC2CMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/C2CMessage'
+        total:
+          type: integer
+          format: int64
+    ChatGroupMemberQuery:
+      type: object
+      properties:
+        groupId:
+          type: integer
+          description: 群组ID
+          format: int64
+        keyword:
+          type: string
+          description: 成员昵称关键词
+        pageNum:
+          type: integer
+          description: 页码
+          format: int32
+        pageSize:
+          type: integer
+          description: 每页数量
+          format: int32
+      description: 群组成员查询对象
+    ChatGroupMemberDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 成员ID
+          format: int64
+        groupId:
+          type: integer
+          description: 群组ID
+          format: int64
+        userId:
+          type: integer
+          description: 用户ID
+          format: int64
+        username:
+          type: string
+          description: 用户名
+        nickname:
+          type: string
+          description: 用户昵称
+        nicknameInGroup:
+          type: string
+          description: 群内昵称
+        avatarUrl:
+          type: string
+          description: 头像URL
+        role:
+          type: string
+          description: 角色
+        joinTime:
+          type: string
+          description: 加入时间
+          format: date-time
+        status:
+          type: integer
+          description: 状态：1在群，2离群
+          format: int32
+      description: 群组成员信息DTO
+    ResultListChatGroupMemberDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatGroupMemberDTO'
+        total:
+          type: integer
+          format: int64
+    ChatGroupQuery:
+      type: object
+      properties:
+        keyword:
+          type: string
+          description: 群组名称关键词
+        pageNum:
+          type: integer
+          description: 页码
+          format: int32
+        pageSize:
+          type: integer
+          description: 每页数量
+          format: int32
+      description: 群组查询对象
+    ResultListChatGroupDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatGroupDTO'
+        total:
+          type: integer
+          format: int64
+    UserSearchQuery:
+      type: object
+      properties:
+        keyword:
+          type: string
+          description: 关键词（用户名/昵称/手机号）
+        pageNum:
+          type: integer
+          description: 页码
+          format: int32
+        pageSize:
+          type: integer
+          description: 每页数量
+          format: int32
+      description: 用户搜索查询对象
+    ResultListUserSearchDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSearchDTO'
+        total:
+          type: integer
+          format: int64
+    UserSearchDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 用户ID
+          format: int64
+        username:
+          type: string
+          description: 用户名
+        nickname:
+          type: string
+          description: 昵称
+        avatarUrl:
+          type: string
+          description: 头像URL
+        gender:
+          type: integer
+          description: 性别：0未知，1男，2女
+          format: int32
+        isFriend:
+          type: boolean
+          description: 是否已是好友
+      description: 用户搜索结果DTO
+    FriendRequestQuery:
+      type: object
+      properties:
+        userId:
+          type: integer
+          description: 用户ID
+          format: int64
+        status:
+          type: integer
+          description: 请求状态：0-待处理，1-已接受，2-已拒绝
+          format: int32
+        pageNum:
+          type: integer
+          description: 页码
+          format: int32
+        pageSize:
+          type: integer
+          description: 每页数量
+          format: int32
+      description: 好友请求查询对象
+    FriendRequestDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 请求ID
+          format: int64
+        fromUserId:
+          type: integer
+          description: 发送者用户ID
+          format: int64
+        fromUsername:
+          type: string
+          description: 发送者用户名
+        fromNickname:
+          type: string
+          description: 发送者昵称
+        fromAvatarUrl:
+          type: string
+          description: 发送者头像URL
+        status:
+          type: integer
+          description: 请求状态：0-待处理，1-已接受，2-已拒绝
+          format: int32
+        remark:
+          type: string
+          description: 请求备注
+        requestTime:
+          type: string
+          description: 请求时间
+          format: date-time
+      description: 好友请求DTO
+    ResultListFriendRequestDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/FriendRequestDTO'
+        total:
+          type: integer
+          format: int64
+    FriendQuery:
+      type: object
+      properties:
+        userId:
+          type: integer
+          description: 用户ID
+          format: int64
+        keyword:
+          type: string
+          description: 好友昵称关键词
+        pageNum:
+          type: integer
+          description: 页码
+          format: int32
+        pageSize:
+          type: integer
+          description: 每页数量
+          format: int32
+      description: 好友查询对象
+    FriendDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 好友关系ID
+          format: int64
+        userId:
+          type: integer
+          description: 用户ID
+          format: int64
+        username:
+          type: string
+          description: 用户名
+        nickname:
+          type: string
+          description: 昵称
+        avatarUrl:
+          type: string
+          description: 头像URL
+        gender:
+          type: integer
+          description: 性别：0未知，1男，2女
+          format: int32
+        remark:
+          type: string
+          description: 备注名
+        status:
+          type: string
+          description: 在线状态
+        createdAt:
+          type: string
+          description: 成为好友的时间
+          format: date-time
+      description: 好友信息DTO
+    ResultListFriendDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/FriendDTO'
+        total:
+          type: integer
+          format: int64
+    ChatContent:
+      type: object
+      properties:
+        text:
+          type: string
+    ChatElement:
+      type: object
+      properties:
+        type:
+          type: string
+        content:
+          type: object
+          additionalProperties:
+            type: object
+          properties: {}
+    ChatUserInfo:
+      type: object
+      properties:
+        role:
+          type: integer
+          format: int32
+        userID:
+          type: string
+    GroupChatData:
+      type: object
+      properties:
+        actionStatus:
+          type: string
+        complete:
+          type: integer
+          format: int32
+        errorCode:
+          type: integer
+          format: int32
+        errorInfo:
+          type: string
+        groupID:
+          type: string
+        messageList:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupHistoryMessage'
+        nextSequence:
+          type: integer
+          format: int64
+    GroupHistoryMessage:
+      type: object
+      properties:
+        msgId:
+          type: string
+        checkResult:
+          type: integer
+          format: int32
+        clientTime:
+          type: integer
+          format: int64
+        cloudCustomData:
+          type: string
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatElement'
+        event:
+          type: integer
+          format: int32
+        from:
+          type: string
+        groupProfile:
+          $ref: '#/components/schemas/GroupProfile'
+        messageFromAccountExtraInformation:
+          $ref: '#/components/schemas/MessageExtraInfo'
+        messageRemindType:
+          type: integer
+          format: int32
+        msgPlaceHolder:
+          type: integer
+          format: int32
+        nick:
+          type: string
+        to:
+          type: string
+        toAccountType:
+          type: integer
+          format: int32
+        isPlaceMessage:
+          type: integer
+          format: int32
+        isSupportExtension:
+          type: integer
+          format: int32
+        messageVersion:
+          type: integer
+          format: int32
+        priority:
+          type: integer
+          format: int32
+        random:
+          type: integer
+          format: int64
+        sequence:
+          type: integer
+          format: int64
+        time:
+          type: integer
+          format: int64
+        tinyID:
+          type: string
+        toGroupID:
+          type: string
+        uinExtInfo:
+          $ref: '#/components/schemas/ChatUserInfo'
+        isRead:
+          type: boolean
+        readNum:
+          type: integer
+          format: int32
+        unreadNum:
+          type: integer
+          format: int32
+    GroupProfile:
+      type: object
+      properties:
+        avatar:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        nick:
+          type: string
+        msgPlaceHolder:
+          type: string
+        fromAccountType:
+          type: integer
+          format: int32
+        toAccountType:
+          type: integer
+          format: int32
+        groupCode:
+          type: integer
+          format: int64
+        groupID:
+          type: string
+        groupName:
+          type: string
+        groupType:
+          type: string
+        hugeGroupFlag:
+          type: integer
+          format: int32
+        messageRemindType:
+          type: integer
+          format: int32
+        messageFromAccountExtraInformation:
+          $ref: '#/components/schemas/ChatUserInfo'
+    MessageExtraInfo:
+      type: object
+      properties:
+        role:
+          type: integer
+          format: int32
+        userID:
+          type: string
+    ResultGroupChatData:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/GroupChatData'
+        total:
+          type: integer
+          format: int64
+    MessageControlInfo:
+      type: object
+      properties:
+        excludedFromLastMessage:
+          type: integer
+          format: int32
+        excludedFromUnreadCount:
+          type: integer
+          format: int32
+        noMuteNotifications:
+          type: integer
+          format: int32
+    ResultSingleChatData:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/SingleChatData'
+        total:
+          type: integer
+          format: int64
+    SingleChatData:
+      type: object
+      properties:
+        actionStatus:
+          type: string
+        complete:
+          type: integer
+          format: int32
+        errorCode:
+          type: integer
+          format: int32
+        errorInfo:
+          type: string
+        lastMessageTime:
+          type: integer
+          format: int64
+        maxCnt:
+          type: integer
+          format: int32
+        messageKey:
+          type: integer
+          format: int64
+        messageList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SingleChatMessage'
+    SingleChatMessage:
+      type: object
+      properties:
+        msgId:
+          type: string
+        checkResult:
+          type: integer
+          format: int32
+        clientTime:
+          type: integer
+          format: int64
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatElement'
+        from:
+          type: string
+        messageControlInfo:
+          $ref: '#/components/schemas/MessageControlInfo'
+        messageVersion:
+          type: integer
+          format: int32
+        msgFlagBits:
+          type: integer
+          format: int32
+        needReadReceipt:
+          type: integer
+          format: int32
+        random:
+          type: integer
+          format: int64
+        readReceiptSentByPeer:
+          type: integer
+          format: int32
+        sequence:
+          type: integer
+          format: int64
+        time:
+          type: integer
+          format: int64
+        tinyID:
+          type: string
+        to:
+          type: string
+        cloudCustomData:
+          type: string
+        isRead:
+          type: boolean
+        supportExtension:
+          type: boolean
+    MyProfileForm:
+      type: object
+      properties:
+        nickname:
+          type: string
+          description: 昵称
+        avatarUrl:
+          type: string
+          description: 头像URL
+        gender:
+          type: integer
+          description: 性别：0未知，1男，2女
+          format: int32
+    MyProfileDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        nickname:
+          type: string
+          description: 昵称
+        avatarUrl:
+          type: string
+          description: 头像URL
+        qrCodeUrl:
+          type: string
+          description: 二维码url˚
+        gender:
+          type: integer
+          description: 性别：0未知，1男，2女
+          format: int32
+        phone:
+          type: string
+          description: 手机号
+    ResultMyProfileDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/MyProfileDTO'
+        total:
+          type: integer
+          format: int64
+    ResultString:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: string
+        total:
+          type: integer
+          format: int64
+    ResultWordDictionaryDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/WordDictionaryDTO'
+        total:
+          type: integer
+          format: int64
+    WordDefinitionDTO:
+      type: object
+      properties:
+        definition:
+          type: string
+          description: 定义
+        translationZh:
+          type: string
+          description: 中文翻译
+        examples:
+          type: array
+          description: 例句列表
+          items:
+            type: string
+            description: 例句列表
+      description: 词汇定义DTO
+    WordDictionaryDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID
+        word:
+          type: string
+          description: 词汇
+        language:
+          type: string
+          description: 语言代码
+        phonetic:
+          type: string
+          description: 音标
+        tags:
+          type: array
+          description: 标签列表
+          items:
+            type: string
+            description: 标签列表
+        definitions:
+          type: array
+          description: 词汇定义列表
+          items:
+            $ref: '#/components/schemas/WordDefinitionDTO'
+        createdAt:
+          type: string
+          description: 创建时间
+          format: date-time
+        updatedAt:
+          type: string
+          description: 更新时间
+          format: date-time
+      description: 词典DTO
+    UserConfigForm:
+      required:
+        - configKey
+        - configValue
+      type: object
+      properties:
+        configKey:
+          type: string
+        configValue:
+          type: string
+        description:
+          type: string
+    ResultBoolean:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: boolean
+        total:
+          type: integer
+          format: int64
+    MessageContext:
+      type: object
+      properties:
+        messageId:
+          type: string
+          description: 消息ID
+        messageType:
+          type: string
+          description: 消息类型：single(单聊)/group(群聊)
+        content:
+          type: string
+          description: 消息内容
+        senderId:
+          type: string
+          description: 发送者ID
+        sendTime:
+          type: string
+          description: 发送时间
+          format: date-time
+      description: 相关聊天记录上下文
+    ResultWordContextsDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/WordContextsDTO'
+        total:
+          type: integer
+          format: int64
+    WordContextsDTO:
+      type: object
+      properties:
+        word:
+          type: string
+          description: 词汇
+        contexts:
+          type: array
+          description: 相关聊天记录上下文
+          items:
+            $ref: '#/components/schemas/MessageContext'
+      description: 词汇上下文DTO
+    FrequentWordHistoryQuery:
+      type: object
+      properties:
+        startDate:
+          type: string
+          description: 开始日期，格式：yyyy-MM-dd
+          format: date-time
+        endDate:
+          type: string
+          description: 结束日期，格式：yyyy-MM-dd
+          format: date-time
+        pageNum:
+          type: integer
+          description: 页码，从1开始
+          format: int32
+          default: 1
+        pageSize:
+          type: integer
+          description: 每页记录数
+          format: int32
+          default: 10
+      description: 历史高频词汇查询参数
+    FrequentWordDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID
+        dictionaryId:
+          type: string
+          description: 词典ID
+        word:
+          type: string
+          description: 词汇
+        language:
+          type: string
+          description: 语言代码
+        frequency:
+          type: integer
+          description: 出现频率
+          format: int32
+        recordDate:
+          type: string
+          description: 记录日期，格式：yyyy-MM-dd
+        createdAt:
+          type: string
+          description: 创建时间
+          format: date-time
+      description: 高频词汇DTO
+    FrequentWordHistoryDTO:
+      type: object
+      properties:
+        dateRange:
+          type: string
+          description: 日期范围
+        frequentWords:
+          type: array
+          description: 高频词汇列表
+          items:
+            $ref: '#/components/schemas/FrequentWordDTO'
+        total:
+          type: integer
+          description: 总记录数
+          format: int64
+      description: 历史高频词汇DTO
+    ResultFrequentWordHistoryDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/FrequentWordHistoryDTO'
+        total:
+          type: integer
+          format: int64
+    ResultListFrequentWordDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/FrequentWordDTO'
+        total:
+          type: integer
+          format: int64
+    ResultListUserConfigDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserConfigDTO'
+        total:
+          type: integer
+          format: int64
+    UserConfigDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 配置ID
+          format: int64
+        configKey:
+          type: string
+          description: 配置键
+        configValue:
+          type: string
+          description: 配置值
+        description:
+          type: string
+          description: 配置描述
+      description: 用户配置信息
+    TextToSpeechForm:
+      type: object
+      properties:
+        text:
+          type: string
+        gender:
+          type: integer
+          format: int32
+        code:
+          type: string
+        md5:
+          type: string
+    DictionaryForm:
+      type: object
+      properties: {}
+    ExampleDTO:
+      type: object
+      properties:
+        english:
+          type: string
+        chinese:
+          type: string
+    PhraseDTO:
+      type: object
+      properties:
+        phrase:
+          type: string
+        meaning:
+          type: string
+    ResultListWordCardDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/WordCardDTO'
+        total:
+          type: integer
+          format: int64
+    SimilarWordDTO:
+      type: object
+      properties:
+        word:
+          type: string
+        meaning:
+          type: string
+    WordCardDTO:
+      type: object
+      properties:
+        userVocabularyId:
+          type: integer
+          description: 用户词汇ID
+          format: int64
+        vocabularyId:
+          type: integer
+          description: 词典ID
+          format: int64
+        word:
+          type: string
+          description: 单词/词搭原文
+        translate:
+          type: string
+          description: 翻译
+        stability:
+          type: number
+          description: 用户稳定度值
+          format: double
+        status:
+          type: string
+          description: 用户状态：陌生 / 较悉 / 掌握
+        memoryArea:
+          type: number
+          description: 用户单词记忆面积用于排序
+        lastPracticeTime:
+          type: string
+          description: 最后练习时间
+          format: date-time
+        contextJson:
+          $ref: '#/components/schemas/ContextJson'
+        hasParent:
+          type: boolean
+          description: 是否有父级单词
+      description: 词卡返回结构
+    ModifyTagForm:
+      type: object
+      properties:
+        wordId:
+          type: integer
+          description: 单词ID
+          format: int64
+        tag:
+          type: integer
+          description: 单词标签
+          format: int32
+    DeleteWordFrom:
+      type: object
+      properties:
+        wordId:
+          type: integer
+          description: 单词ID
+          format: int64
+    UserCorpusForm:
+      type: object
+      properties:
+        wordId:
+          type: integer
+          description: 单词ID
+          format: int64
+        language:
+          type: string
+          description: 语言
+        word:
+          type: string
+          description: 单词
+        chineseText:
+          type: string
+          description: 中文语料
+        originalText:
+          type: string
+          description: 原文语料
+      description: 语料收集表单
+    QueryWordForm:
+      type: object
+      properties:
+        word:
+          type: string
+          description: 单词
+    QueryWordDTO:
+      type: object
+      properties:
+        wordId:
+          type: integer
+          format: int64
+        word:
+          type: string
+        audioUrl:
+          type: string
+        americanPhonetic:
+          type: string
+        definition:
+          type: string
+        examples:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExampleDTO'
+        phrases:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhraseDTO'
+        similarWords:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimilarWordDTO'
+    ResultQueryWordDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/QueryWordDTO'
+        total:
+          type: integer
+          format: int64
+    WordQuery:
+      type: object
+      properties:
+        word:
+          type: string
+          description: 单词
+    TranslateForm:
+      type: object
+      properties:
+        sourceLanguage:
+          type: string
+          description: 原文语言代码，如 zh=中文，english=英文，ja=日文，fr=法文，de=德文，es=西班牙语，it=意大利文，ru=俄文，pt=葡萄牙文，ar=阿拉伯文
+        targetLanguage:
+          type: string
+          description: 目标语言代码，如 zh=中文，english=英文，ja=日文，fr=法文，de=德文，es=西班牙语，it=意大利文，ru=俄文，pt=葡萄牙文，ar=阿拉伯文
+        text:
+          type: string
+          description: 文本
+    ResultTranslateDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/TranslateDTO'
+        total:
+          type: integer
+          format: int64
+    TranslateDTO:
+      type: object
+      properties:
+        sourceLanguage:
+          type: string
+          description: 原文语言代码，如 zh=中文，english=英文，ja=日文，fr=法文，de=德文，es=西班牙语，it=意大利文，ru=俄文，pt=葡萄牙文，ar=阿拉伯文
+        targetLanguage:
+          type: string
+          description: 目标语言代码，如 zh=中文，english=英文，ja=日文，fr=法文，de=德文，es=西班牙语，it=意大利文，ru=俄文，pt=葡萄牙文，ar=阿拉伯文
+        originalSentence:
+          type: string
+          description: 原文
+        translateSentence:
+          type: string
+          description: 译文
+    ExampleUserDTO:
+      type: object
+      properties:
+        originalText:
+          type: string
+        chineseText:
+          type: string
+        markStatus:
+          type: integer
+          format: int32
+    VersionInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        versionKey:
+          type: string
+        versionInfo:
+          type: string
+        status:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ResultListVersionInfo:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/VersionInfo'
+        total:
+          type: integer
+          format: int64
+    VersionAuditForm:
+      type: object
+      properties:
+        versionKey:
+          type: string
+          description: 版本号
+        status:
+          type: integer
+          description: 状态码：0=未审核，1=通过，2=拒绝
+          format: int32
+    UserLoginForm:
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+          description: 用户名
+        password:
+          type: string
+          description: 密码
+      description: 用户名密码登录表单
+    SmsLoginForm:
+      required:
+        - code
+        - phone
+        - smsType
+      type: object
+      properties:
+        phone:
+          pattern: ^1[3-9]\d{9}$
+          type: string
+          description: 手机号
+        code:
+          type: string
+          description: 验证码
+        smsType:
+          type: string
+          description: 短信类型
+          enum:
+            - login
+            - bind_phone
+            - update_phone
+            - reset_password
+      description: 短信验证码登录表单
+    SmsSendForm:
+      required:
+        - phone
+        - type
+      type: object
+      properties:
+        phone:
+          pattern: ^1[3-9]\d{9}$
+          type: string
+          description: 手机号
+        type:
+          type: string
+          description: 短信类型
+          enum:
+            - login
+            - bind_phone
+            - update_phone
+            - reset_password
+      description: 短信发送表单
+    GroupConfigForm:
+      required:
+        - configKey
+        - imGroupId
+      type: object
+      properties:
+        imGroupId:
+          type: string
+          description: 腾讯IM群组ID
+        configKey:
+          type: string
+          description: 配置键
+        configValue:
+          type: string
+          description: 配置值
+        description:
+          type: string
+          description: 配置描述
+      description: 群组配置表单
+    C2CConfigForm:
+      required:
+        - configKey
+        - toUserId
+      type: object
+      properties:
+        toUserId:
+          type: integer
+          description: 目标用户ID
+          format: int64
+        configKey:
+          type: string
+          description: 配置键
+        configValue:
+          type: string
+          description: 配置值
+        description:
+          type: string
+          description: 配置描述
+      description: 用户对用户配置表单
+    GroupConfigDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 配置ID
+          format: int64
+        configKey:
+          type: string
+          description: 配置键
+        configValue:
+          type: string
+          description: 配置值
+        groupId:
+          type: string
+          description: 群组ID
+        imGroupId:
+          type: string
+          description: 腾讯IM群组ID
+        description:
+          type: string
+          description: 配置描述
+      description: 群组配置信息
+    ResultListGroupConfigDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupConfigDTO'
+        total:
+          type: integer
+          format: int64
+    C2CConfigDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 配置ID
+          format: int64
+        configKey:
+          type: string
+          description: 配置键
+        configValue:
+          type: string
+          description: 配置值
+        fromUserId:
+          type: string
+          description: 源用户ID
+        toUserId:
+          type: string
+          description: 目标用户ID
+        description:
+          type: string
+          description: 配置描述
+      description: 用户对用户配置信息
+    ResultListC2CConfigDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/C2CConfigDTO'
+        total:
+          type: integer
+          format: int64
+    PhoneUpdateForm:
+      required:
+        - code
+        - phone
+      type: object
+      properties:
+        phone:
+          pattern: ^1[3-9]\d{9}$
+          type: string
+          description: 新手机号
+        code:
+          type: string
+          description: 验证码
+    PhoneBindForm:
+      required:
+        - code
+        - phone
+      type: object
+      properties:
+        phone:
+          pattern: ^1[3-9]\d{9}$
+          type: string
+          description: 新手机号
+        code:
+          type: string
+          description: 验证码
+    WechatAuthLoginForm:
+      required:
+        - code
+      type: object
+      properties:
+        code:
+          type: string
+          description: 微信授权临时登录凭证
+      description: 微信第三方登录表单
+    Language:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        code:
+          type: string
+        name:
+          type: string
+        translateError:
+          type: string
+        deleted:
+          type: integer
+          format: int32
+        createTime:
+          type: string
+          format: date-time
+        updateTime:
+          type: string
+          format: date-time
+    ResultListLanguage:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Language'
+        total:
+          type: integer
+          format: int64
+    ResultLanguage:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/Language'
+        total:
+          type: integer
+          format: int64
+    AppleAuthLoginForm:
+      required:
+        - identityToken
+      type: object
+      properties:
+        identityToken:
+          type: string
+          description: 苹果授权身份令牌
+        nickname:
+          type: string
+          description: 昵称
+        email:
+          type: string
+          description: 邮箱
+      description: 苹果第三方登录表单
+    ChatGroupSearchDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 群组ID
+          format: int64
+        imGroupId:
+          type: string
+          description: 群组IMID
+        groupName:
+          type: string
+          description: 群组名称
+        avatarUrl:
+          type: string
+          description: 群头像URL
+        announcement:
+          type: string
+          description: 群公告
+        createdAt:
+          type: string
+          description: 创建时间
+          format: date-time
+      description: 群组信息DTO
+    ResultListChatGroupSearchDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatGroupSearchDTO'
+        total:
+          type: integer
+          format: int64
+    CreateReportForm:
+      required:
+        - messageContent
+        - messageCreateTime
+        - messageId
+        - reportReason
+        - reportedUserId
+        - type
+      type: object
+      properties:
+        reportedUserId:
+          type: string
+          description: 被举报人ID
+        messageId:
+          type: string
+          description: 被举报的消息ID
+        messageContent:
+          type: string
+          description: 被举报的消息内容
+        messageCreateTime:
+          type: integer
+          description: 被举报消息的创建时间，格式：yyyy-MM-dd HH:mm:ss
+          format: int64
+        reportReason:
+          type: string
+          description: 举报原因
+        type:
+          type: integer
+          description: 类型字段 1为文字，2为图片，3为音频，4为视频
+          format: int32
+      description: 创建举报信息表单
+    AppVersionCheckForm:
+      required:
+        - currentVersion
+        - platform
+      type: object
+      properties:
+        platform:
+          type: string
+          description: 平台类型：ios、android、harmony
+        currentVersion:
+          type: string
+          description: 当前APP版本号
+      description: APP版本检查表单
+    AppVersionCheckDTO:
+      type: object
+      properties:
+        needUpdate:
+          type: boolean
+          description: 是否需要更新
+        forceUpdate:
+          type: boolean
+          description: 是否强制更新（当前版本低于最低版本时）
+        title:
+          type: string
+          description: 更新标题
+        updateMessage:
+          type: string
+          description: 更新内容
+        storeUrl:
+          type: string
+          description: 应用商店下载链接
+        latestVersion:
+          type: string
+          description: 最新版本号
+      description: APP版本检查结果
+    ResultAppVersionCheckDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/AppVersionCheckDTO'
+        total:
+          type: integer
+          format: int64
+    ResultObject:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: object
+          properties: {}
+        total:
+          type: integer
+          format: int64
+    ResultWechatJsConfigDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/WechatJsConfigDTO'
+        total:
+          type: integer
+          format: int64
+    WechatJsConfigDTO:
+      type: object
+      properties:
+        appId:
+          type: string
+          description: 微信公众号AppId
+        timestamp:
+          type: integer
+          description: 时间戳
+          format: int64
+        nonceStr:
+          type: string
+          description: 随机字符串
+        signature:
+          type: string
+          description: 签名
+        url:
+          type: string
+          description: 当前页面URL
+      description: 微信JS-SDK配置信息
+    RegisterInvitationDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 主键id
+          format: int32
+        code:
+          type: string
+          description: 邀请码
+        type:
+          type: integer
+          description: 邀请码类型
+          format: int32
+      description: 注册邀请码返回信息
+    ResultRegisterInvitationDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/RegisterInvitationDTO'
+        total:
+          type: integer
+          format: int64
+    PaymentCreateForm:
+      required:
+        - amount
+        - paymentType
+        - productId
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+        amount:
+          minimum: 0.01
+          type: number
+        paymentType:
+          type: string
+        description:
+          type: string
+        extraData:
+          type: string
+      description: 支付订单创建表单
+    PaymentResultDTO:
+      type: object
+      properties:
+        paymentOrderNo:
+          type: string
+        thirdPartyOrderNo:
+          type: string
+        paymentType:
+          type: string
+          enum:
+            - WECHAT
+            - ALIPAY
+            - APPLE
+        paymentStatus:
+          type: string
+          enum:
+            - PENDING
+            - PROCESSING
+            - SUCCESS
+            - FAILED
+            - CANCELLED
+            - REFUNDED
+            - PARTIAL_REFUNDED
+        amount:
+          type: number
+        paidAt:
+          type: string
+          format: date-time
+        paymentUrl:
+          type: string
+        qrCode:
+          type: string
+        errorMessage:
+          type: string
+        extraData:
+          type: string
+    ResultPaymentResultDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/PaymentResultDTO'
+        total:
+          type: integer
+          format: int64
+    ApplePaymentVerifyForm:
+      required:
+        - productId
+        - receiptData
+        - transactionId
+      type: object
+      properties:
+        receiptData:
+          type: string
+        productId:
+          type: string
+        transactionId:
+          type: string
+        sandbox:
+          type: boolean
+      description: 苹果支付验证表单
+    PaymentRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        paymentOrderNo:
+          type: string
+        thirdPartyOrderNo:
+          type: string
+        userId:
+          type: integer
+          format: int64
+        productId:
+          type: integer
+          format: int64
+        amount:
+          type: number
+        paymentType:
+          type: string
+          enum:
+            - WECHAT
+            - ALIPAY
+            - APPLE
+        paymentStatus:
+          type: string
+          enum:
+            - PENDING
+            - PROCESSING
+            - SUCCESS
+            - FAILED
+            - CANCELLED
+            - REFUNDED
+            - PARTIAL_REFUNDED
+        description:
+          type: string
+        callbackData:
+          type: string
+        paidAt:
+          type: string
+          format: date-time
+        expireAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        remark:
+          type: string
+    ResultListPaymentRecord:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentRecord'
+        total:
+          type: integer
+          format: int64
+    ResultListSystemConfig:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SystemConfig'
+        total:
+          type: integer
+          format: int64
+    SystemConfig:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        configKey:
+          type: string
+        configValue:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deleted:
+          type: integer
+          format: int32
+    UseInvitationForm:
+      required:
+        - code
+      type: object
+      properties:
+        code:
+          type: string
+          description: 邀请码
+      description: 使用邀请码表单
+    GetUseInvitationDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 被邀请用户ID
+          format: int64
+        avatarUrl:
+          type: string
+          description: 用户头像
+        nickname:
+          type: string
+          description: 用户昵称
+      description: 用户查看邀请信息返回表
+    ResultListGetUseInvitationDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetUseInvitationDTO'
+        total:
+          type: integer
+          format: int64
+    AddUserVocabularyForm:
+      required:
+        - contextJson
+        - translation
+        - word
+      type: object
+      properties:
+        contextJson:
+          type: string
+          description: 上下文JSON
+        translation:
+          type: string
+          description: 译文
+        word:
+          type: string
+          description: 原文
+        audioUrl:
+          type: string
+          description: 发音音频URL
+      description: 用户新增词汇提交表单
+    OrderItem:
+      type: object
+      properties:
+        column:
+          type: string
+        asc:
+          type: boolean
+    PageUserVocabulary:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserVocabulary'
+        total:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int64
+        current:
+          type: integer
+          format: int64
+        orders:
+          type: array
+          writeOnly: true
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        optimizeCountSql:
+          $ref: '#/components/schemas/PageUserVocabulary'
+        searchCount:
+          $ref: '#/components/schemas/PageUserVocabulary'
+        optimizeJoinOfCountSql:
+          type: boolean
+          writeOnly: true
+        maxLimit:
+          type: integer
+          format: int64
+          writeOnly: true
+        countId:
+          type: string
+          writeOnly: true
+        pages:
+          type: integer
+          format: int64
+          deprecated: true
+    ResultPageUserVocabulary:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/PageUserVocabulary'
+        total:
+          type: integer
+          format: int64
+    UserVocabulary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+        translation:
+          type: string
+        word:
+          type: string
+        audioUrl:
+          type: string
+        collocations:
+          type: string
+        grammar:
+          type: string
+        exampleSentence:
+          type: string
+        category:
+          type: string
+        contextJson:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    QueryOnlineStatusRequest:
+      type: object
+      properties:
+        userIds:
+          type: array
+          items:
+            type: string
+    Vocabulary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        word:
+          type: string
+        translation:
+          type: string
+        phonetic:
+          type: string
+        audioUrl:
+          type: string
+        grammar:
+          type: string
+        examples:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        parentId:
+          type: integer
+          format: int64
+        languageCode:
+          type: string
+    WordAnalysisForm:
+      required:
+        - word
+      type: object
+      properties:
+        word:
+          type: string
+          description: 用户点击消息中的单词
+        originalSentence:
+          type: string
+          description: 点击收藏的句子
+        languageCode:
+          type: string
+          description: 语言代码
+      description: 用户点击消息中的单词提交表单
+    ExampleSentenceDTO:
+      type: object
+      properties:
+        sentence:
+          type: string
+          description: 例句
+        translation:
+          type: string
+          description: 翻译
+        audioUrl:
+          type: string
+          description: 音频URL
+      description: 例句信息
+    ResultVocabularyAnalysisDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/VocabularyAnalysisDTO'
+        total:
+          type: integer
+          format: int64
+    VocabularyAnalysisDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 单词ID
+          format: int64
+        word:
+          type: string
+          description: 单词
+        translation:
+          type: string
+          description: 翻译
+        phonetic:
+          type: string
+          description: 音标
+        audioUrl:
+          type: string
+          description: 音频URL
+        collocations:
+          type: array
+          description: 常见词搭
+          items:
+            $ref: '#/components/schemas/WordAnalysisDTO'
+        examples:
+          type: array
+          description: 例句
+          items:
+            $ref: '#/components/schemas/ExampleSentenceDTO'
+      description: 单词分析结果
+    WordAnalysisDTO:
+      type: object
+      properties:
+        word:
+          type: string
+          description: 词搭
+        translate:
+          type: string
+          description: 翻译
+      description: 返回的词搭组合
+    Content:
+      type: object
+      properties:
+        original:
+          type: string
+          description: 原文
+        translation:
+          type: string
+          description: 翻译
+        audioUrl:
+          type: string
+          description: 音频URL
+      description: 消息内容
+    ContextJson:
+      type: object
+      properties:
+        previous:
+          $ref: '#/components/schemas/Sentence'
+        current:
+          $ref: '#/components/schemas/Sentence'
+        next:
+          $ref: '#/components/schemas/Sentence'
+      description: 语境结构
+    Sentence:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 消息ID
+        gender:
+          type: string
+          description: 性别
+        content:
+          $ref: '#/components/schemas/Content'
+      description: 句子信息
+    WordMatchForm:
+      type: object
+      properties:
+        word:
+          type: string
+          description: 词搭
+        translation:
+          type: string
+          description: 翻译
+      description: 单个词搭表单
+    WordSelectionForm:
+      type: object
+      properties:
+        userId:
+          type: integer
+          description: 用户ID
+          format: int64
+        baseWord:
+          type: string
+          description: 基础单词，比如 translate
+        contextJson:
+          $ref: '#/components/schemas/ContextJson'
+        selectedCollocations:
+          type: array
+          description: 用户选择的词搭列表
+          items:
+            $ref: '#/components/schemas/WordMatchForm'
+      description: 用户一次收藏提交表单
+    WordCardForm:
+      type: object
+      properties:
+        w:
+          type: integer
+          description: |-
+            卷王专属(天天复习、冲刺型选手)这个按钮对应的是W=3
+            节奏大师(每周两三次，稳中求进选手)     这个按钮对应的是W=7
+            摆烂天尊(半个月两三次，佛系随缘选手)   这个按钮对应的是W=14
+          format: int32
+        pageNum:
+          type: integer
+          description: 页码（从1开始）
+          format: int32
+        pageSize:
+          type: integer
+          description: 每页大小
+          format: int32
+      description: 用户刷卡模式
+    SwipeWordCardsForm:
+      type: object
+      properties:
+        userWordId:
+          type: integer
+          description: 用户单词ID
+          format: int64
+        status:
+          type: string
+          description: 单词学习状态
+          enum:
+            - UNFAMILIAR
+            - FAMILIAR
+            - MASTERED
+      description: 刷词卡提交表单
+  securitySchemes: {}
+servers: []
+security: []
