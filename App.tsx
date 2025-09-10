@@ -10,7 +10,7 @@ import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
 
 import { UIKitProvider } from '@tencentcloud/chat-uikit-react-native';
 
-import { Login as LoginScreen } from './src/pages/Login/index.tsx';
+import { Login as LoginScreen } from './src/pages/Login/index';
 import { PasswordLogin as PasswordLoginScreen } from './src/pages/Login/PasswordLogin';
 import { Language as LanguageScreen } from './src/pages/Language';
 import { Home as HomeScreen } from './src/pages/Home';
