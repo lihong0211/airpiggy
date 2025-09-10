@@ -1,6 +1,6 @@
 {
   "name": "Airpiggy",
-  "version": "1.2.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "adr": "emulator -avd Pixel_7_Pro_API_34 && react-native run-android",

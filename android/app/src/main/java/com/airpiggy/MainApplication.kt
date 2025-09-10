@@ -1,4 +1,4 @@
-package com.aa5p.airpiggy
+package com.airpiggy
 
 import android.app.Application
 import com.facebook.react.PackageList
