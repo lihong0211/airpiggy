@@ -166,3 +166,4 @@ java_pid*.hprof
 *.orig
 *.rejios/*.xcarchive
 ios/build
+.DS_Store
