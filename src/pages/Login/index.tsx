@@ -17,8 +17,8 @@ import { IRouterParams } from '../../../interface';
 import { useIsFocused } from '@react-navigation/native';
 import { colors, themeColors } from '../../themes/colors';
 import { ToastContainer, showToastMessage } from '../../components/Toast';
-import { sendSmsCode, smsLogin } from '../../api/api';
-import type { sendSmsCodeRequest, smsLoginRequest } from '../../api/types';
+import { sendSmsCode, smsLogin, wechatLogin } from '../../api/api';
+import type { sendSmsCodeRequest, smsLoginRequest, WechatAuthLoginForm } from '../../api/types';
 import {
   wechatThirdLogin,
   checkUserPhoneBinding,
@@ -55,6 +55,7 @@ export const Login = ({ navigation }: IRouterParams) => {
 
   const [phoneError, setPhoneError] = useState<string>('');
   const [verificationError, setVerificationError] = useState<string>('');
+  const [isWeChatLogging, setIsWeChatLogging] = useState<boolean>(false);
 
   const validatePhoneNumber = (phone: string): string | null => {
     if (!phone) return '请输入手机号';
@@ -176,7 +177,13 @@ export const Login = ({ navigation }: IRouterParams) => {
   };
 
   const handleWeChatLogin = async () => {
+    if (isWeChatLogging) {
+      return; // 防止重复点击
+    }
+
     try {
+      setIsWeChatLogging(true);
+      
       showToastMessage({
         msg: '正在启动微信登录...',
         duration: 1000,
@@ -185,36 +192,88 @@ export const Login = ({ navigation }: IRouterParams) => {
       // 使用完整的微信登录流程
       const result = await wechatThirdLogin();
 
-      if (result.success) {
+      if (result && result.code) {
         showToastMessage({
-          msg: '微信登录成功',
-          duration: 2000,
+          msg: '微信授权成功，正在登录...',
+          duration: 1000,
         });
 
-        // 检查用户是否需要绑定手机号
-        if (result.user && checkUserPhoneBinding(result.user)) {
-          // 用户已绑定手机号，直接跳转到主页面
-          console.log('用户已绑定手机号，跳转到主页面');
-          // TODO: 跳转到主页面
-          // navigation.navigate('Home');
+        // 调用后端微信登录API
+        const loginData: WechatAuthLoginForm = {
+          code: result.code,
+        };
+
+        const response = await wechatLogin(loginData);
+
+        if (response.code === 200 && response.data) {
+          const { SDKAppID, userSig } = genTestUserSig(response.data.userId);
+          const chatData: LoginInfo = {
+            SDKAppID,
+            userID: response.data.userId,
+            userSig,
+            appKey: APPKey,
+          };
+
+          // 检查用户手机号绑定状态
+          const phoneBindingResult = await checkUserPhoneBinding(response.data.userId);
+          
+          if (phoneBindingResult.isBound) {
+            // 用户已绑定手机号，直接登录并跳转到主页面
+            showToastMessage({
+              msg: '微信登录成功',
+              duration: 2000,
+            });
+
+            LoginChat(chatData, () => {
+              navigation.navigate('Home');
+            });
+          } else {
+            // 用户未绑定手机号，跳转到绑定手机号页面
+            showToastMessage({
+              msg: '请先绑定手机号',
+              duration: 2000,
+            });
+            
+            // 保存用户信息到本地存储，用于绑定手机号时使用
+            // 这里可以保存到AsyncStorage或其他状态管理
+            
+            // TODO: 跳转到绑定手机号页面，传递用户信息
+            // navigation.navigate('BindMobile', { userInfo: response.data });
+          }
         } else {
-          // 用户未绑定手机号，跳转到绑定手机号页面
-          console.log('用户未绑定手机号，跳转到绑定页面');
-          // TODO: 跳转到绑定手机号页面
-          // navigation.navigate('BindMobile');
+          showToastMessage({
+            msg: response.message || '微信登录失败，请重试',
+            duration: 2000,
+          });
         }
       } else {
         showToastMessage({
-          msg: result.message || '微信登录失败，请重试',
+          msg: '微信授权失败，请重试',
           duration: 2000,
         });
       }
     } catch (error: any) {
       console.error('微信登录错误:', error);
+      
+      // 根据错误类型显示不同的提示信息
+      let errorMessage = '微信登录失败，请重试';
+      
+      if (error.message) {
+        if (error.message.includes('网络')) {
+          errorMessage = '网络连接失败，请检查网络后重试';
+        } else if (error.message.includes('微信')) {
+          errorMessage = '微信登录失败，请确保微信已安装并重试';
+        } else if (error.message.includes('授权')) {
+          errorMessage = '微信授权失败，请重试';
+        }
+      }
+      
       showToastMessage({
-        msg: '微信登录失败，请重试',
+        msg: errorMessage,
         duration: 2000,
       });
+    } finally {
+      setIsWeChatLogging(false);
     }
   };
 
@@ -224,6 +283,7 @@ export const Login = ({ navigation }: IRouterParams) => {
       duration: 2000,
     });
   };
+
 
   const openUserAgreement = () => {};
 
@@ -413,12 +473,19 @@ export const Login = ({ navigation }: IRouterParams) => {
 
               {/* 微信登录 */}
               <TouchableOpacity
-                style={styles.thirdPartyButton}
+                style={[
+                  styles.thirdPartyButton,
+                  isWeChatLogging && styles.thirdPartyButtonDisabled,
+                ]}
                 onPress={() => onThirdPartyLogin('wechat')}
+                disabled={isWeChatLogging}
               >
                 <Image
                   source={require('../../static/wechat.png')}
-                  style={styles.thirdPartyIconImage}
+                  style={[
+                    styles.thirdPartyIconImage,
+                    isWeChatLogging && styles.thirdPartyIconImageDisabled,
+                  ]}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -589,5 +656,11 @@ const styles = StyleSheet.create({
   thirdPartyIconImage: {
     width: 24,
     height: 24,
+  },
+  thirdPartyButtonDisabled: {
+    opacity: 0.5,
+  },
+  thirdPartyIconImageDisabled: {
+    opacity: 0.5,
   },
 });

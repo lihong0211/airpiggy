@@ -1,5 +1,7 @@
 // 微信 SDK 集成模块
 import { Platform } from 'react-native';
+// @ts-ignore
+import WeChatLib from 'react-native-wechat-lib';
 
 // 微信 SDK 类型定义
 export interface WeChatSDKConfig {
@@ -43,18 +45,13 @@ class WeChatSDKManager {
       
       if (Platform.OS === 'ios') {
         // iOS 初始化
-        console.log('初始化 iOS 微信 SDK');
-        // 这里应该调用实际的微信 SDK 初始化方法
-        // 例如：WeChatLib.registerApp(config.appId, config.universalLink);
+        await WeChatLib.registerApp(config.appId, config.universalLink);
       } else {
         // Android 初始化
-        console.log('初始化 Android 微信 SDK');
-        // 这里应该调用实际的微信 SDK 初始化方法
-        // 例如：WeChatLib.registerApp(config.appId);
+        await WeChatLib.registerApp(config.appId);
       }
 
       this.isInitialized = true;
-      console.log('微信 SDK 初始化成功');
       return true;
     } catch (error) {
       console.error('微信 SDK 初始化失败:', error);
@@ -72,9 +69,7 @@ class WeChatSDKManager {
         return false;
       }
 
-      // 这里应该调用实际的微信 SDK 方法
-      // 例如：return await WeChatLib.isWXAppInstalled();
-      return true; // 简化实现
+      return await WeChatLib.isWXAppInstalled();
     } catch (error) {
       console.error('检查微信安装状态失败:', error);
       return false;
@@ -91,9 +86,7 @@ class WeChatSDKManager {
         return false;
       }
 
-      // 这里应该调用实际的微信 SDK 方法
-      // 例如：return await WeChatLib.isWXAppSupportApi();
-      return true; // 简化实现
+      return await WeChatLib.isWXAppSupportApi();
     } catch (error) {
       console.error('检查微信版本支持失败:', error);
       return false;
@@ -109,24 +102,40 @@ class WeChatSDKManager {
         throw new Error('微信 SDK 未初始化');
       }
 
-      // 这里应该调用实际的微信 SDK 授权方法
-      // 例如：
-      // const result = await WeChatLib.sendAuthRequest({
-      //   scope: 'snsapi_userinfo',
-      //   state: 'wechat_login_state'
-      // });
       
-      console.log('发起微信授权请求');
+      // 检查微信是否已安装
+      const isInstalled = await this.isWeChatInstalled();
+      if (!isInstalled) {
+        throw new Error('微信未安装');
+      }
+
+      // 检查微信版本是否支持
+      const isSupported = await this.isWeChatSupported();
+      if (!isSupported) {
+        throw new Error('微信版本过低');
+      }
       
-      // 模拟实现
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            code: `wechat_code_${Date.now()}`,
-            state: 'wechat_login_state',
-          });
-        }, 2000);
+      const result = await WeChatLib.sendAuthRequest({
+        scope: 'snsapi_userinfo',
+        state: 'wechat_login_state'
       });
+      
+      
+      // 检查授权结果
+      if (result.errCode && result.errCode !== 0) {
+        throw new Error(`微信授权失败: ${result.errStr || '未知错误'}`);
+      }
+      
+      if (!result.code) {
+        throw new Error('未获取到微信授权码');
+      }
+      
+      return {
+        code: result.code,
+        state: result.state,
+        errCode: result.errCode,
+        errStr: result.errStr,
+      };
     } catch (error) {
       console.error('微信授权失败:', error);
       return null;

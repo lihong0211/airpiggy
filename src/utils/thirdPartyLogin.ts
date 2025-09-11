@@ -37,8 +37,8 @@ export interface PhoneBindingResult {
 // 第三方登录配置
 const THIRD_PARTY_CONFIG = {
   wechat: {
-    appId: 'your_wechat_app_id', // 需要替换为实际的微信 AppID
-    universalLink: 'your_universal_link', // iOS 通用链接
+    appId: 'wx1234567890abcdef', // 需要替换为实际的微信 AppID
+    universalLink: 'https://your-domain.com/universal-link', // iOS 通用链接
   },
 };
 
@@ -54,7 +54,6 @@ export const initializeThirdPartyLogin = async (): Promise<boolean> => {
       return true;
     }
 
-    console.log('🚀 初始化第三方登录 SDK');
 
     // 初始化微信 SDK
     const wechatConfig: WeChatSDKConfig = {
@@ -68,7 +67,6 @@ export const initializeThirdPartyLogin = async (): Promise<boolean> => {
     }
 
     isSDKInitialized = true;
-    console.log('✅ 第三方登录 SDK 初始化完成');
     return true;
   } catch (error) {
     console.error('第三方登录 SDK 初始化失败:', error);
@@ -123,7 +121,6 @@ export const checkWeChatSupported = async (): Promise<boolean> => {
  */
 export const wechatThirdLogin = async (): Promise<WeChatLoginResult | null> => {
   try {
-    console.log('🚀 开始微信第三方登录');
 
     // 检查微信是否已安装
     const isInstalled = await checkWeChatInstalled();
@@ -141,7 +138,6 @@ export const wechatThirdLogin = async (): Promise<WeChatLoginResult | null> => {
 
     if (shouldUseMockLogin()) {
       // 开发模式：使用模拟登录
-      console.log('🔧 使用模拟微信登录');
       const mockResult = await mockWeChatLogin();
       if (mockResult && mockResult.code) {
         return {
@@ -157,7 +153,21 @@ export const wechatThirdLogin = async (): Promise<WeChatLoginResult | null> => {
 
   } catch (error) {
     console.error('微信登录失败:', error);
-    Alert.alert('登录失败', '微信登录过程中发生错误，请重试');
+    
+    let errorMessage = '微信登录过程中发生错误，请重试';
+    if (error instanceof Error) {
+      if (error.message.includes('微信未安装')) {
+        errorMessage = '请先安装微信客户端';
+      } else if (error.message.includes('微信版本过低')) {
+        errorMessage = '微信版本过低，请升级到最新版本';
+      } else if (error.message.includes('微信授权失败')) {
+        errorMessage = '微信授权失败，请重试';
+      } else if (error.message.includes('未获取到微信授权码')) {
+        errorMessage = '未获取到微信授权码，请重试';
+      }
+    }
+    
+    Alert.alert('登录失败', errorMessage);
     return null;
   }
 };
@@ -195,7 +205,6 @@ const performRealWeChatLogin = async (): Promise<WeChatLoginResult | null> => {
  */
 export const checkUserPhoneBinding = async (userId: string): Promise<PhoneBindingResult> => {
   try {
-    console.log('📱 检查用户手机号绑定状态:', userId);
 
     // 这里应该调用后端 API 检查用户手机号绑定状态
     // 由于没有实际的后端接口，这里提供模拟实现
@@ -210,7 +219,6 @@ export const checkUserPhoneBinding = async (userId: string): Promise<PhoneBindin
         message: '模拟检查结果',
       };
       
-      console.log('模拟手机号绑定检查结果:', mockResult);
       return mockResult;
     }
 
@@ -236,7 +244,6 @@ const performRealPhoneBindingCheck = async (userId: string): Promise<PhoneBindin
     // const response = await fetch(`/api/user/${userId}/phone-binding`);
     // const data = await response.json();
     
-    console.log('调用真实 API 检查手机号绑定:', userId);
     
     // 模拟 API 响应
     return {
@@ -273,7 +280,6 @@ export const handleWeChatLoginResult = (result: WeChatLoginResult | null): boole
     return false;
   }
 
-  console.log('微信登录成功，授权码:', result.code);
   return true;
 };
 
@@ -289,5 +295,4 @@ export const getThirdPartyConfig = () => {
  */
 export const updateThirdPartyConfig = (config: Partial<typeof THIRD_PARTY_CONFIG>) => {
   Object.assign(THIRD_PARTY_CONFIG, config);
-  console.log('第三方登录配置已更新:', THIRD_PARTY_CONFIG);
 };
