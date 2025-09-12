@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "8ZXQCAFMQP.com.aa5p.airpiggyapp",
+        "paths": ["/airpiggy/*"]
+      }
+    ]
+  }
+}

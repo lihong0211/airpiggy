@@ -1,11 +1,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
+    package="com.aa5p.airpiggyapp"
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- 关键步骤：声明需要查询的包 -->
+    <queries>
+        <!-- 查询指定的微信包名 -->
+        <package android:name="com.tencent.mm" />
+        <!-- 如果您还需要检测其他应用，也一并声明 -->
+        <package android:name="com.tencent.wework" />
+        <package android:name="com.tencent.mobileqq" />
+        <package android:name="com.tencent.tim" />
+    </queries>
+
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -25,6 +36,37 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+                <!-- 微信回调 - AppID scheme -->
+                <intent-filter>
+                    <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                    <data android:scheme="wx8a3afbe6c5606590" />
+                </intent-filter>
+                <!-- 微信回调 - 通用scheme -->
+                <intent-filter>
+                    <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                    <data android:scheme="weixin" />
+                </intent-filter>
+                <!-- Universal Links 支持 -->
+                <intent-filter android:autoVerify="true">
+                    <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                    <data android:scheme="https"
+                          android:host="www.aa5p.com" />
+                </intent-filter>
       </activity>
+      
+      <!-- 微信回调Activity -->
+      <activity
+          android:name=".wxapi.WXEntryActivity"
+          android:theme="@android:style/Theme.Translucent.NoTitleBar"
+          android:exported="true"
+          android:taskAffinity="com.aa5p.airpiggyapp"
+          android:launchMode="singleTask" />
+          
     </application>
 </manifest>

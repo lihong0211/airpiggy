@@ -1,18 +1,6 @@
-import { Platform, Alert } from 'react-native';
-import { 
-  mockWeChatLogin, 
-  shouldUseMockLogin, 
-  mockCheckWeChatInstalled,
-  mockCheckWeChatSupported 
-} from './mockWechatLogin';
-import { 
-  wechatSDK, 
-  initializeWeChat, 
-  checkWeChatInstalled as sdkCheckWeChatInstalled,
-  checkWeChatSupported as sdkCheckWeChatSupported,
-  sendWeChatAuth,
-  WeChatSDKConfig 
-} from './wechatSDK';
+import { Alert, NativeModules, Platform, DeviceEventEmitter } from 'react-native';
+
+const { WeChatSDKModule } = NativeModules;
 
 // 微信登录相关类型定义
 export interface WeChatLoginResult {
@@ -27,6 +15,15 @@ export interface WeChatLoginError {
   errStr: string;
 }
 
+export interface WeChatAuthResult {
+  errCode: number;
+  code?: string;
+  state?: string;
+  country?: string;
+  lang?: string;
+  errStr?: string;
+}
+
 // 用户手机号绑定检查结果
 export interface PhoneBindingResult {
   isBound: boolean;
@@ -37,12 +34,153 @@ export interface PhoneBindingResult {
 // 第三方登录配置
 const THIRD_PARTY_CONFIG = {
   wechat: {
-    appId: 'wx1234567890abcdef', // 需要替换为实际的微信 AppID
-    universalLink: 'https://your-domain.com/universal-link', // iOS 通用链接
+    appId: 'wx8a3afbe6c5606590', // 真实的微信 AppID
+    universalLink: 'https://www.aa5p.com/airpiggyapp/', // iOS 通用链接
+    // 固定MD5签名 - 用于微信开放平台配置
+    // 此签名通过 GetMD5Signature.java 工具获取，无需动态计算
+    md5Signature: '8269645ad4b699ec6f9b0dadc358620d', // 应用的固定MD5签名
   },
 };
 
-// 初始化第三方登录 SDK
+/**
+ * 微信登录管理器 - 集成官方SDK功能
+ */
+class WeChatLoginManager {
+  private static instance: WeChatLoginManager;
+  private isInitialized = false;
+
+  static getInstance(): WeChatLoginManager {
+    if (!WeChatLoginManager.instance) {
+      WeChatLoginManager.instance = new WeChatLoginManager();
+    }
+    return WeChatLoginManager.instance;
+  }
+
+  /**
+   * 初始化微信SDK
+   */
+  async initialize(): Promise<boolean> {
+    try {
+      if (this.isInitialized) {
+        return true;
+      }
+
+      if (Platform.OS !== 'android') {
+        console.log('当前版本仅支持Android平台');
+        return false;
+      }
+
+      if (!WeChatSDKModule) {
+        console.error('WeChatSDKModule 未找到，请检查原生模块配置');
+        return false;
+      }
+
+      this.isInitialized = true;
+      console.log('微信SDK初始化成功');
+      return true;
+    } catch (error) {
+      console.error('微信SDK初始化失败:', error);
+      return false;
+    }
+  }
+
+  /**
+   * 检查微信是否已安装
+   */
+  async isWeChatInstalled(): Promise<boolean> {
+    try {
+      if (!this.isInitialized) {
+        await this.initialize();
+      }
+
+      if (!WeChatSDKModule) {
+        return false;
+      }
+
+      const isInstalled = await WeChatSDKModule.isWeChatInstalled();
+      console.log('微信安装状态:', isInstalled);
+      return isInstalled;
+    } catch (error) {
+      console.error('检查微信安装状态失败:', error);
+      return false;
+    }
+  }
+
+  /**
+   * 获取应用签名 (用于微信开放平台配置)
+   */
+  getAppSignature(): string {
+    // 直接返回配置中的固定MD5签名
+    const signature = THIRD_PARTY_CONFIG.wechat.md5Signature;
+    if (!signature) {
+      console.error('❌ MD5签名未配置，请在 THIRD_PARTY_CONFIG.wechat.md5Signature 中设置');
+      return '';
+    }
+    
+    console.log('使用固定MD5签名:', signature);
+    return signature;
+  }
+
+  /**
+   * 发起微信授权登录
+   */
+  async sendAuthRequest(scope: string = 'snsapi_userinfo', state: string = 'wechat_login_state'): Promise<WeChatAuthResult | null> {
+    try {
+      if (!this.isInitialized) {
+        await this.initialize();
+      }
+
+      if (!WeChatSDKModule) {
+        throw new Error('WeChatSDKModule 未找到');
+      }
+
+      console.log('开始微信授权请求...');
+      
+      // 创建Promise来等待微信回调
+      return new Promise((resolve, reject) => {
+        // 设置超时
+        const timeout = setTimeout(() => {
+          subscription.remove();
+          reject(new Error('微信授权超时'));
+        }, 30000); // 30秒超时
+
+        // 监听微信授权结果
+        const subscription = DeviceEventEmitter.addListener('WeChatAuthResult', (result: WeChatAuthResult) => {
+          console.log('收到微信官方SDK授权结果:', result);
+          clearTimeout(timeout);
+          subscription.remove();
+          
+          resolve(result);
+        });
+
+        // 发送授权请求
+        WeChatSDKModule.sendAuthRequest(scope, state)
+          .then((requestResult: string) => {
+            console.log('微信授权请求发送成功:', requestResult);
+          })
+          .catch((error: any) => {
+            console.error('微信授权请求发送失败:', error);
+            clearTimeout(timeout);
+            subscription.remove();
+            reject(error);
+          });
+      });
+    } catch (error) {
+      console.error('微信授权失败:', error);
+      return null;
+    }
+  }
+
+  /**
+   * 检查SDK是否可用
+   */
+  isAvailable(): boolean {
+    return Platform.OS === 'android' && !!WeChatSDKModule && this.isInitialized;
+  }
+}
+
+// 全局实例和状态
+const wechatLoginManager = WeChatLoginManager.getInstance();
 let isSDKInitialized = false;
 
 /**
@@ -54,20 +192,14 @@ export const initializeThirdPartyLogin = async (): Promise<boolean> => {
       return true;
     }
 
-
-    // 初始化微信 SDK
-    const wechatConfig: WeChatSDKConfig = {
-      appId: THIRD_PARTY_CONFIG.wechat.appId,
-      universalLink: THIRD_PARTY_CONFIG.wechat.universalLink,
-    };
-
-    const wechatInitialized = await initializeWeChat(wechatConfig);
-    if (!wechatInitialized) {
-      console.warn('微信 SDK 初始化失败，将使用模拟模式');
+    // 使用集成的微信登录管理器进行初始化
+    const success = await wechatLoginManager.initialize();
+    if (success) {
+      isSDKInitialized = true;
+      console.log('第三方登录 SDK 初始化成功');
     }
-
-    isSDKInitialized = true;
-    return true;
+    
+    return success;
   } catch (error) {
     console.error('第三方登录 SDK 初始化失败:', error);
     return false;
@@ -79,16 +211,13 @@ export const initializeThirdPartyLogin = async (): Promise<boolean> => {
  */
 export const checkWeChatInstalled = async (): Promise<boolean> => {
   try {
-    if (shouldUseMockLogin()) {
-      return mockCheckWeChatInstalled();
-    }
-
     // 确保 SDK 已初始化
     if (!isSDKInitialized) {
       await initializeThirdPartyLogin();
     }
 
-    return await sdkCheckWeChatInstalled();
+    // 使用集成的微信登录管理器
+    return await wechatLoginManager.isWeChatInstalled();
   } catch (error) {
     console.error('检查微信安装状态失败:', error);
     return false;
@@ -100,16 +229,8 @@ export const checkWeChatInstalled = async (): Promise<boolean> => {
  */
 export const checkWeChatSupported = async (): Promise<boolean> => {
   try {
-    if (shouldUseMockLogin()) {
-      return mockCheckWeChatSupported();
-    }
-
-    // 确保 SDK 已初始化
-    if (!isSDKInitialized) {
-      await initializeThirdPartyLogin();
-    }
-
-    return await sdkCheckWeChatSupported();
+    // 使用集成的微信登录管理器检查可用性
+    return wechatLoginManager.isAvailable();
   } catch (error) {
     console.error('检查微信版本支持失败:', error);
     return false;
@@ -117,88 +238,37 @@ export const checkWeChatSupported = async (): Promise<boolean> => {
 };
 
 /**
- * 微信第三方登录
+ * 发起微信授权登录
  */
-export const wechatThirdLogin = async (): Promise<WeChatLoginResult | null> => {
-  try {
-
-    // 检查微信是否已安装
-    const isInstalled = await checkWeChatInstalled();
-    if (!isInstalled) {
-      Alert.alert('提示', '请先安装微信客户端');
-      return null;
-    }
-
-    // 检查微信版本是否支持
-    const isSupported = await checkWeChatSupported();
-    if (!isSupported) {
-      Alert.alert('提示', '微信版本过低，请升级到最新版本');
-      return null;
-    }
-
-    if (shouldUseMockLogin()) {
-      // 开发模式：使用模拟登录
-      const mockResult = await mockWeChatLogin();
-      if (mockResult && mockResult.code) {
-        return {
-          code: mockResult.code,
-          state: mockResult.state,
-        };
-      }
-      return null;
-    }
-
-    // 生产模式：调用真实的微信登录
-    return await performRealWeChatLogin();
-
-  } catch (error) {
-    console.error('微信登录失败:', error);
-    
-    let errorMessage = '微信登录过程中发生错误，请重试';
-    if (error instanceof Error) {
-      if (error.message.includes('微信未安装')) {
-        errorMessage = '请先安装微信客户端';
-      } else if (error.message.includes('微信版本过低')) {
-        errorMessage = '微信版本过低，请升级到最新版本';
-      } else if (error.message.includes('微信授权失败')) {
-        errorMessage = '微信授权失败，请重试';
-      } else if (error.message.includes('未获取到微信授权码')) {
-        errorMessage = '未获取到微信授权码，请重试';
-      }
-    }
-    
-    Alert.alert('登录失败', errorMessage);
-    return null;
-  }
-};
-
-/**
- * 执行真实的微信登录
- */
-const performRealWeChatLogin = async (): Promise<WeChatLoginResult | null> => {
+export const sendWeChatAuthRequest = async (scope: string = 'snsapi_userinfo', state: string = 'wechat_login_state'): Promise<WeChatAuthResult | null> => {
   try {
     // 确保 SDK 已初始化
     if (!isSDKInitialized) {
       await initializeThirdPartyLogin();
     }
 
-    // 使用微信 SDK 进行授权登录
-    const authResult = await sendWeChatAuth();
-    if (!authResult) {
-      return null;
-    }
-
-    return {
-      code: authResult.code,
-      state: authResult.state,
-      errCode: authResult.errCode,
-      errStr: authResult.errStr,
-    };
+    return await wechatLoginManager.sendAuthRequest(scope, state);
   } catch (error) {
-    console.error('真实微信登录失败:', error);
+    console.error('微信授权登录失败:', error);
     return null;
   }
 };
+
+/**
+ * 获取应用签名
+ */
+export const getAppSignature = (): string => {
+  // 直接返回固定的MD5签名，无需异步操作
+  return wechatLoginManager.getAppSignature();
+};
+
+/**
+ * 检查微信登录是否可用
+ */
+export const isWeChatLoginAvailable = (): boolean => {
+  return wechatLoginManager.isAvailable();
+};
+
 
 /**
  * 检查用户手机号绑定状态
@@ -209,20 +279,7 @@ export const checkUserPhoneBinding = async (userId: string): Promise<PhoneBindin
     // 这里应该调用后端 API 检查用户手机号绑定状态
     // 由于没有实际的后端接口，这里提供模拟实现
     
-    if (shouldUseMockLogin()) {
-      // 开发模式：模拟返回结果
-      await new Promise(resolve => setTimeout(resolve, 1000)); // 模拟网络延迟
-      
-      const mockResult: PhoneBindingResult = {
-        isBound: Math.random() > 0.5, // 随机返回绑定状态
-        phoneNumber: Math.random() > 0.5 ? '138****8888' : undefined,
-        message: '模拟检查结果',
-      };
-      
-      return mockResult;
-    }
-
-    // 生产模式：调用真实 API
+    // 调用真实 API
     return await performRealPhoneBindingCheck(userId);
 
   } catch (error) {
@@ -239,17 +296,22 @@ export const checkUserPhoneBinding = async (userId: string): Promise<PhoneBindin
  */
 const performRealPhoneBindingCheck = async (userId: string): Promise<PhoneBindingResult> => {
   try {
-    // 这里应该调用实际的后端 API
-    // 示例 API 调用：
-    // const response = await fetch(`/api/user/${userId}/phone-binding`);
-    // const data = await response.json();
+    // 调用真实的API获取用户详情
+    const { detail } = await import('../api/api');
+    const response = await detail();
     
-    
-    // 模拟 API 响应
-    return {
-      isBound: false,
-      message: '请先绑定手机号',
-    };
+    if (response.code === 200 && response.data) {
+      const hasPhone = response.data.phone && response.data.phone.trim() !== '';
+      return {
+        isBound: hasPhone,
+        message: hasPhone ? '手机号已绑定' : '请先绑定手机号',
+      };
+    } else {
+      return {
+        isBound: false,
+        message: '获取用户信息失败',
+      };
+    }
   } catch (error) {
     console.error('API 调用失败:', error);
     return {

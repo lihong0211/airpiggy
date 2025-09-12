@@ -1,4 +1,4 @@
-package com.airpiggy
+package com.aa5p.airpiggyapp
 
 import android.app.Application
 import com.facebook.react.PackageList
@@ -20,6 +20,8 @@ class MainApplication : Application(), ReactApplication {
             PackageList(this).packages.apply {
               // Packages that cannot be autolinked yet can be added manually here, for example:
               // add(MyReactNativePackage())
+              // 只注册微信官方SDK
+              add(WeChatSDKPackage())
             }
 
         override fun getJSMainModuleName(): String = "index"

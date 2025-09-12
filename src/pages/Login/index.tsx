@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { genTestUserSig, APPKey } from '../../../debug/GenerateTestUserSig';
 import { LoginChat, LoginInfo } from '../../../initApp';
@@ -20,8 +21,11 @@ import { ToastContainer, showToastMessage } from '../../components/Toast';
 import { sendSmsCode, smsLogin, wechatLogin } from '../../api/api';
 import type { sendSmsCodeRequest, smsLoginRequest, WechatAuthLoginForm } from '../../api/types';
 import {
-  wechatThirdLogin,
   checkUserPhoneBinding,
+  initializeThirdPartyLogin,
+  checkWeChatInstalled,
+  sendWeChatAuthRequest,
+  getAppSignature,
 } from '../../utils/thirdPartyLogin';
 
 const CustomCheckBox = ({
@@ -189,10 +193,20 @@ export const Login = ({ navigation }: IRouterParams) => {
         duration: 1000,
       });
 
-      // 使用完整的微信登录流程
-      const result = await wechatThirdLogin();
+      // 检查微信是否已安装
+      const installed = await checkWeChatInstalled();
+      if (!installed) {
+        showToastMessage({
+          msg: '请先安装微信客户端',
+          duration: 2000,
+        });
+        return;
+      }
 
-      if (result && result.code) {
+      // 使用简化的微信登录流程
+      const result = await sendWeChatAuthRequest('snsapi_userinfo', 'wechat_login_state');
+
+      if (result && result.errCode === 0 && result.code) {
         showToastMessage({
           msg: '微信授权成功，正在登录...',
           duration: 1000,
@@ -206,6 +220,16 @@ export const Login = ({ navigation }: IRouterParams) => {
         const response = await wechatLogin(loginData);
 
         if (response.code === 200 && response.data) {
+          // 先保存token到AsyncStorage，以便后续API调用使用
+          if (response.data.token) {
+            try {
+              await AsyncStorage.setItem('token', response.data.token);
+              console.log('Token保存成功:', response.data.token);
+            } catch (error) {
+              console.error('Token保存失败:', error);
+            }
+          }
+
           const { SDKAppID, userSig } = genTestUserSig(response.data.userId);
           const chatData: LoginInfo = {
             SDKAppID,
@@ -247,8 +271,19 @@ export const Login = ({ navigation }: IRouterParams) => {
           });
         }
       } else {
+        // 处理微信授权失败的情况
+        let errorMsg = '微信授权失败，请重试';
+        if (result && result.errCode !== 0) {
+          if (result.errCode === -2) {
+            errorMsg = '用户取消授权';
+          } else if (result.errCode === -4) {
+            errorMsg = '微信未安装';
+          } else if (result.errStr) {
+            errorMsg = result.errStr;
+          }
+        }
         showToastMessage({
-          msg: '微信授权失败，请重试',
+          msg: errorMsg,
           duration: 2000,
         });
       }
@@ -311,6 +346,29 @@ export const Login = ({ navigation }: IRouterParams) => {
       return () => clearTimeout(timer);
     }
   }, [countdown]);
+
+  // 初始化微信登录 SDK
+  useEffect(() => {
+    const initSDK = async () => {
+      try {
+        const success = await initializeThirdPartyLogin();
+        if (success) {
+          console.log('微信登录 SDK 初始化成功');
+          
+          // 获取并打印应用签名用于调试
+          const signature = getAppSignature();
+          console.log('🔍 当前应用MD5签名:', signature);
+          console.log('📋 此签名已配置到微信开放平台');
+        } else {
+          console.warn('微信登录 SDK 初始化失败');
+        }
+      } catch (error) {
+        console.error('初始化微信登录 SDK 时出错:', error);
+      }
+    };
+
+    initSDK();
+  }, []);
 
   return (
     isPageShow && (
