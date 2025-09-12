@@ -11,3 +11,4 @@ export {
   BackButtonWithSafeArea, 
   BackButtonWithoutSafeArea 
 } from './BackButton';
+export { BackHeader } from './BackHeader';

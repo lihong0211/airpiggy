@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { themeColors } from '../../themes/colors';
+import { BackHeader } from '../../components/BackHeader';
 
 interface TranslateProps {
   navigation: any;
@@ -72,21 +73,10 @@ export const Translate: React.FC<TranslateProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="transparent" translucent />
+      <StatusBar backgroundColor={themeColors.background.secondary} barStyle="dark-content" />
 
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>← 返回</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>翻译设置</Text>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>保存</Text>
-        </TouchableOpacity>
-      </View>
+      <BackHeader title="翻译设置" />
 
       {/* Content */}
       <View style={styles.content}>
@@ -108,6 +98,7 @@ export const Translate: React.FC<TranslateProps> = ({ navigation }) => {
         <View style={styles.settingItem}>
           <Text style={styles.settingLabel}>自动播放</Text>
           <Switch
+            style={styles.switch}
             value={autoPlay}
             onValueChange={setAutoPlay}
             trackColor={{ false: '#E0E0E0', true: themeColors.primary }}
@@ -119,18 +110,20 @@ export const Translate: React.FC<TranslateProps> = ({ navigation }) => {
         <View style={styles.settingItem}>
           <Text style={styles.settingLabel}>播放速度</Text>
           <View style={styles.sliderContainer}>
-            <Slider
-              style={styles.slider}
-              minimumValue={0.5}
-              maximumValue={2.0}
-              value={playbackSpeed}
-              onValueChange={setPlaybackSpeed}
-              step={0.1}
-              minimumTrackTintColor={themeColors.primary}
-              maximumTrackTintColor="#E0E0E0"
-              thumbStyle={styles.sliderThumb}
-            />
-            <Text style={styles.speedValue}>{playbackSpeed.toFixed(1)}</Text>
+            <View style={styles.sliderWrapper}>
+              <Slider
+                style={styles.slider}
+                minimumValue={0.5}
+                maximumValue={1.25}
+                value={playbackSpeed}
+                onValueChange={setPlaybackSpeed}
+                step={0.25}
+                minimumTrackTintColor={themeColors.primary}
+                maximumTrackTintColor="#E0E0E0"
+                thumbTintColor={themeColors.primary}
+              />
+            </View>
+            <Text style={styles.speedValue}>{playbackSpeed}</Text>
           </View>
         </View>
 
@@ -154,17 +147,16 @@ export const Translate: React.FC<TranslateProps> = ({ navigation }) => {
         animationType="slide"
         onRequestClose={() => setShowLanguageModal(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>选择语言</Text>
-              <TouchableOpacity
-                style={styles.modalCloseButton}
-                onPress={() => setShowLanguageModal(false)}
-              >
-                <Text style={styles.modalCloseText}>完成</Text>
-              </TouchableOpacity>
-            </View>
+        <TouchableOpacity 
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowLanguageModal(false)}
+        >
+          <TouchableOpacity 
+            style={styles.modalContent}
+            activeOpacity={1}
+            onPress={() => {}}
+          >
             <ScrollView style={styles.modalList}>
               {languages.map(language => (
                 <TouchableOpacity
@@ -184,8 +176,8 @@ export const Translate: React.FC<TranslateProps> = ({ navigation }) => {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-          </View>
-        </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
       </Modal>
 
       {/* 语音性别选择模态框 */}
@@ -195,17 +187,16 @@ export const Translate: React.FC<TranslateProps> = ({ navigation }) => {
         animationType="slide"
         onRequestClose={() => setShowVoiceGenderModal(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>选择语音性别</Text>
-              <TouchableOpacity
-                style={styles.modalCloseButton}
-                onPress={() => setShowVoiceGenderModal(false)}
-              >
-                <Text style={styles.modalCloseText}>完成</Text>
-              </TouchableOpacity>
-            </View>
+        <TouchableOpacity 
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowVoiceGenderModal(false)}
+        >
+          <TouchableOpacity 
+            style={styles.modalContent}
+            activeOpacity={1}
+            onPress={() => {}}
+          >
             <ScrollView style={styles.modalList}>
               {voiceGenders.map(gender => (
                 <TouchableOpacity
@@ -225,8 +216,8 @@ export const Translate: React.FC<TranslateProps> = ({ navigation }) => {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-          </View>
-        </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
       </Modal>
     </SafeAreaView>
   );
@@ -235,28 +226,7 @@ export const Translate: React.FC<TranslateProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: themeColors.primary,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
+    backgroundColor: themeColors.background.secondary,
   },
   saveButton: {
     paddingVertical: 8,
@@ -269,14 +239,14 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 20,
+    backgroundColor: '#FFFFFF',
   },
   settingItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 16,
+    paddingHorizontal: 16,
     borderBottomWidth: 0.5,
     borderBottomColor: '#F0F0F0',
   },
@@ -288,6 +258,7 @@ const styles = StyleSheet.create({
   settingRight: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   settingValue: {
     fontSize: 16,
@@ -295,8 +266,9 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   arrow: {
-    fontSize: 18,
-    color: '#CCCCCC',
+    fontSize: 22,
+    color: '#888888',
+    lineHeight: 24,
   },
   sliderContainer: {
     flexDirection: 'row',
@@ -304,14 +276,33 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 20,
   },
+  sliderWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+  },
   slider: {
     flex: 1,
-    height: 40,
+    height: 30,
+  },
+  sliderTrack: {
+    height: 6,
+    borderRadius: 3,
   },
   sliderThumb: {
-    backgroundColor: themeColors.primary,
-    width: 20,
-    height: 20,
+    backgroundColor: '#FFFFFF',
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    shadowColor: '#000000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   speedValue: {
     fontSize: 16,
@@ -319,6 +310,10 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     minWidth: 30,
     textAlign: 'right',
+  },
+  switch: {
+    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
+    alignSelf: 'center',
   },
   modalOverlay: {
     flex: 1,
@@ -362,10 +357,12 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderBottomWidth: 0.5,
     borderBottomColor: '#F0F0F0',
+    alignItems: 'center',
   },
   modalItemText: {
     fontSize: 16,
     color: '#333333',
+    textAlign: 'center',
   },
   modalItemSelected: {
     color: themeColors.primary,

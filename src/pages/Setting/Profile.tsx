@@ -10,29 +10,25 @@ import {
 } from 'react-native';
 import { Avatar } from '@tencentcloud/chat-uikit-react-native';
 import { themeColors } from '../../themes/colors';
+import { useUserStore } from '../../hooks/useUserStore';
 
 interface ProfileProps {
   navigation: any;
 }
 
 export const Profile: React.FC<ProfileProps> = ({ navigation }) => {
-  const [userProfile] = useState({
-    phone: '13812345678',
-    nickname: 'cdut007',
-    userId: '1962350063745744898',
-    avatarUrl: '',
-  });
+  const { user } = useUserStore();
 
   // 隐藏手机号中间四位
-  const maskedPhone = userProfile.phone.replace(
+  const maskedPhone = user?.phone ? user.phone.replace(
     /(\d{3})\d{4}(\d{4})/,
     '$1****$2',
-  );
+  ) : '未设置';
 
   const handleCopy = async () => {
     try {
       // 这里使用React Native的Clipboard
-      console.log('复制用户ID:', userProfile.userId);
+      console.log('复制用户ID:', user?.userId);
       Alert.alert('提示', '用户ID已复制到剪贴板');
     } catch (error) {
       Alert.alert('错误', '复制失败');
@@ -63,7 +59,7 @@ export const Profile: React.FC<ProfileProps> = ({ navigation }) => {
     },
     {
       title: '昵称',
-      value: userProfile.nickname,
+      value: user?.nickname || '用户',
       onPress: handleToNickname,
     },
     {
@@ -74,7 +70,7 @@ export const Profile: React.FC<ProfileProps> = ({ navigation }) => {
     },
     {
       title: '用户ID',
-      value: userProfile.userId,
+      value: user?.userId || '1962350063745744898',
       onPress: handleCopy,
     },
     {
@@ -115,7 +111,7 @@ export const Profile: React.FC<ProfileProps> = ({ navigation }) => {
             <Text style={styles.profileTitle}>{item.title}</Text>
             <View style={styles.profileRight}>
               {item.showAvatar ? (
-                <Avatar size={30} radius={15} uri={userProfile.avatarUrl} />
+                <Avatar size={30} radius={15} uri={user?.avatarUrl} />
               ) : (
                 <Text style={styles.profileValue}>{item.value}</Text>
               )}

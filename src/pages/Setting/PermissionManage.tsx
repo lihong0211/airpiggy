@@ -18,6 +18,7 @@ import {
   Permission,
 } from 'react-native-permissions';
 import { themeColors } from '../../themes/colors';
+import { BackHeader } from '../../components/BackHeader';
 
 interface PermissionManageProps {
   navigation: any;
@@ -147,18 +148,10 @@ export const PermissionManage: React.FC<PermissionManageProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="transparent" translucent />
+      <StatusBar backgroundColor={themeColors.background.secondary} barStyle="dark-content" />
 
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>← 返回</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>权限设置</Text>
-      </View>
+      <BackHeader title="权限设置" />
 
       {/* Content */}
       <View style={styles.content}>
@@ -185,11 +178,6 @@ export const PermissionManage: React.FC<PermissionManageProps> = ({
           </TouchableOpacity>
         ))}
 
-        <View style={styles.tipContainer}>
-          <Text style={styles.tipText}>
-            权限用于提供更好的服务体验，您可以在系统设置中随时修改权限设置
-          </Text>
-        </View>
       </View>
     </SafeAreaView>
   );
@@ -198,31 +186,11 @@ export const PermissionManage: React.FC<PermissionManageProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: themeColors.primary,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
+    backgroundColor: themeColors.background.secondary,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
+    backgroundColor: '#FFFFFF',
     paddingTop: 20,
   },
   permissionItem: {
@@ -230,6 +198,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 16,
+    paddingHorizontal: 16,
     borderBottomWidth: 0.5,
     borderBottomColor: '#F0F0F0',
   },
@@ -240,6 +209,7 @@ const styles = StyleSheet.create({
   permissionRight: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   permissionStatus: {
     fontSize: 14,
@@ -252,8 +222,9 @@ const styles = StyleSheet.create({
     color: '#999999',
   },
   arrow: {
-    fontSize: 18,
-    color: '#CCCCCC',
+    fontSize: 22,
+    color: '#888888',
+    lineHeight: 24,
   },
   tipContainer: {
     marginTop: 30,

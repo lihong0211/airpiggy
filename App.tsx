@@ -18,17 +18,6 @@ import { About as AboutScreen } from './src/pages/About';
 import { ChatScreen, ChatSettingScreen } from './src/pages/UIKitScreen';
 
 // Setting related pages
-import { Setting as SettingScreen } from './src/pages/Setting';
-import About from './src/pages/Setting/About';
-import AvatarPage from './src/pages/Setting/Avatar';
-import Nickname from './src/pages/Setting/Nickname';
-import QRCode from './src/pages/Setting/QRCode';
-import PermissionManage from './src/pages/Setting/PermissionManage';
-import DeactivateUser from './src/pages/Setting/DeactivateUser';
-import Profile from './src/pages/Setting/Profile';
-import Report from './src/pages/Setting/Report';
-import GuideInfo from './src/pages/Setting/GuideInfo';
-import Translate from './src/pages/Setting/Translate';
 import Relation from './src/pages/Relation';
 
 import appResources from './i18n';
@@ -96,21 +85,6 @@ function App(): React.JSX.Element {
                   headerTitleAlign: 'center',
                 }}
               />
-              {/* Setting related screens */}
-              <Stack.Screen name="Setting" component={SettingScreen} />
-              <Stack.Screen name="SettingAbout" component={About} />
-              <Stack.Screen name="Avatar" component={AvatarPage} />
-              <Stack.Screen name="Nickname" component={Nickname} />
-              <Stack.Screen name="QRCode" component={QRCode} />
-              <Stack.Screen
-                name="PermissionManage"
-                component={PermissionManage}
-              />
-              <Stack.Screen name="DeactivateUser" component={DeactivateUser} />
-              <Stack.Screen name="Profile" component={Profile} />
-              <Stack.Screen name="Report" component={Report} />
-              <Stack.Screen name="GuideInfo" component={GuideInfo} />
-              <Stack.Screen name="Translate" component={Translate} />
               <Stack.Screen name="Relation" component={Relation} />
             </Stack.Navigator>
           </SafeAreaView>

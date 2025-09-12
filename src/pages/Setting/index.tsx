@@ -11,14 +11,13 @@ import {
   Clipboard,
 } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-
-import { StoreName, TUIStore } from '@tencentcloud/chat-uikit-engine';
-
 import type { IRouterParams } from '../../../interface';
 import { LogoutChat } from '../../../initApp';
-
+import { useUserStore } from '../../hooks/useUserStore';
 import { Avatar } from '@tencentcloud/chat-uikit-react-native';
 import { themeColors } from '../../themes/colors';
+import { ModeModal } from './ModeModal';
+import { FriendModal } from './FriendModal';
 
 const rightArrow = require('../../../assets/right_arrow.png');
 const qrCodeIcon = require('../../static/qrcode.png');
@@ -31,9 +30,13 @@ interface IConfig {
 }
 
 export const Setting = ({ navigation }: IRouterParams) => {
-  const [profile, setProfile] = useState<Record<string, any>>({});
+  const { user, updateUserInfo, fetchUserInfo } = useUserStore();
   const [configList, setConfigList] = useState<IConfig[]>([]);
   const [isPageShow, setIsPageShow] = useState<boolean>(true);
+  const [modeModalVisible, setModeModalVisible] = useState<boolean>(false);
+  const [currentMode, setCurrentMode] = useState<string>('foreign'); // 'foreign' 或 'normal'
+  const [friendModalVisible, setFriendModalVisible] = useState<boolean>(false);
+  const [friendSetting, setFriendSetting] = useState<string>('accept_all'); // 'accept_all', 'need_verify', 'reject_all'
 
   const isFocused = useIsFocused();
 
@@ -43,39 +46,24 @@ export const Setting = ({ navigation }: IRouterParams) => {
     });
   };
 
-  const onUserProfile = (userProfile: Record<string, any>) => {
-    setProfile(userProfile);
+  // 从服务器获取用户资料
+  const loadUserInfo = async () => {
+    try {
+      await fetchUserInfo();
+    } catch (error) {
+      console.log('Error loading user info:', error);
+    }
   };
 
   const onPressSetting = (item: IConfig) => {
     switch (item.name) {
-      case '账号':
-        // 显示账号信息
-        Alert.alert('账号信息', '当前账号：138****1234');
-        break;
-      case '昵称':
-        // 跳转到昵称编辑页面
-        navigation.navigate('Nickname');
-        break;
-      case '头像':
-        // 跳转到头像编辑页面
-        navigation.navigate('Avatar');
-        break;
-      case '用户ID':
-        // 复制用户ID
-        copyUserId();
-        break;
-      case '二维码名片':
-        // 跳转到二维码页面
-        navigation.navigate('QRCode');
-        break;
       case '模式':
-        // 跳转到语言设置页面
-        navigation.navigate('Language');
+        // 显示模式选择弹窗
+        setModeModalVisible(true);
         break;
       case '加我为好友时':
-        // 跳转到好友验证设置页面
-        console.log('跳转到好友验证设置');
+        // 显示好友验证设置弹窗
+        setFriendModalVisible(true);
         break;
       case '翻译设置':
         // 跳转到翻译设置页面
@@ -93,18 +81,13 @@ export const Setting = ({ navigation }: IRouterParams) => {
         // 跳转到关于页面
         navigation.navigate('SettingAbout');
         break;
-      case '账号注销':
-        // 跳转到账号注销页面
-        navigation.navigate('DeactivateUser');
-        break;
       default:
         break;
     }
   };
 
   const onPressProfile = () => {
-    // 跳转到个人资料页面
-    navigation.navigate('Profile');
+    navigation.navigate('UserProfile');
   };
 
   const onPressQRCode = () => {
@@ -115,7 +98,7 @@ export const Setting = ({ navigation }: IRouterParams) => {
   const copyUserId = async () => {
     try {
       // 复制用户ID到剪贴板
-      const userId = profile.userID || '1962350063745744898';
+      const userId = user?.userId || '1962350063745744898';
       Clipboard.setString(userId);
       Alert.alert('提示', '用户ID已复制到剪贴板');
     } catch (error) {
@@ -124,44 +107,46 @@ export const Setting = ({ navigation }: IRouterParams) => {
     }
   };
 
+  const handleModeChange = (mode: string) => {
+    setCurrentMode(mode);
+  };
+
+  const getModeDisplayText = () => {
+    return currentMode === 'foreign' ? '外语模式' : '普通模式';
+  };
+
+  const handleFriendSettingChange = (setting: string) => {
+    setFriendSetting(setting);
+  };
+
+  const getFriendSettingDisplayText = (setting?: string) => {
+    const currentSetting = setting || friendSetting;
+    switch (currentSetting) {
+      case 'accept_all':
+        return '同意任何用户加好友';
+      case 'need_verify':
+        return '需要验证';
+      case 'reject_all':
+        return '拒绝任何人加好友';
+      default:
+        return '同意任何用户加好友';
+    }
+  };
+
   useEffect(() => {
-    TUIStore.watch(StoreName.USER, {
-      userProfile: onUserProfile,
-    });
-    return () => {
-      TUIStore.unwatch(StoreName.USER, {
-        userProfile: onUserProfile,
-      });
-    };
+    // 从服务器获取用户资料
+    loadUserInfo();
   }, []);
 
   useEffect(() => {
     setConfigList([
       {
-        name: '账号',
-        value: '138****1234', // 隐藏手机号中间四位
-      },
-      {
-        name: '昵称',
-        value: profile.nick || 'cdut007',
-      },
-      {
-        name: '头像',
-      },
-      {
-        name: '用户ID',
-        value: profile.userID || '1962350063745744898',
-      },
-      {
-        name: '二维码名片',
-      },
-      {
         name: '模式',
-        value: '外语模式',
+        value: getModeDisplayText(),
       },
       {
         name: '加我为好友时',
-        value: '同意任何用户加好友',
+        value: getFriendSettingDisplayText(),
       },
       {
         name: '翻译设置',
@@ -176,30 +161,30 @@ export const Setting = ({ navigation }: IRouterParams) => {
         name: '关于空气小猪',
         value: 'V1.2.0',
       },
-      {
-        name: '账号注销',
-      },
     ]);
     setIsPageShow(isFocused);
-  }, [isFocused, profile]);
+  }, [isFocused, user, currentMode, friendSetting]);
 
   return (
     isPageShow && (
       <SafeAreaView style={styles.container}>
-        <StatusBar backgroundColor="transparent" translucent />
-        <Text style={styles.title}>我的</Text>
+        <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
         <TouchableOpacity
           style={styles.profileContainer}
           onPress={onPressProfile}
         >
-          <Avatar size={66} radius={33} uri={profile.avatar} />
+          <Avatar 
+            size={66} 
+            radius={4} 
+            uri={user?.avatarUrl && user.avatarUrl.trim() !== '' ? user.avatarUrl : undefined} 
+          />
           <View style={styles.profile}>
             <Text style={styles.nick} ellipsizeMode="tail" numberOfLines={1}>
-              {profile.nick || 'cdut007'}
+              {user?.nickname && user.nickname.trim() !== '' ? user.nickname : '用户'}
             </Text>
             <TouchableOpacity onPress={copyUserId}>
               <Text style={styles.text} numberOfLines={1}>
-                {`用户ID:${profile.userID || '1962350063745744898'}`}
+                {`用户ID:${user?.userId || '1962350063745744898'}`}
               </Text>
             </TouchableOpacity>
           </View>
@@ -228,7 +213,7 @@ export const Setting = ({ navigation }: IRouterParams) => {
               </Text>
               <View style={styles.content}>
                 {item.name === '头像' ? (
-                  <Avatar size={30} radius={15} uri={profile.avatar} />
+                  <Avatar size={30} radius={15} uri={user?.avatarUrl} />
                 ) : (
                   <Text
                     style={styles.value}
@@ -248,6 +233,22 @@ export const Setting = ({ navigation }: IRouterParams) => {
             <Text style={styles.buttonText}>退出登录</Text>
           </TouchableOpacity>
         </View>
+        
+        {/* 模式选择弹窗 */}
+        <ModeModal
+          visible={modeModalVisible}
+          onClose={() => setModeModalVisible(false)}
+          currentMode={currentMode}
+          onModeChange={handleModeChange}
+        />
+        
+        {/* 好友验证设置弹窗 */}
+        <FriendModal
+          visible={friendModalVisible}
+          onClose={() => setFriendModalVisible(false)}
+          currentSetting={friendSetting}
+          onSettingChange={handleFriendSettingChange}
+        />
       </SafeAreaView>
     )
   );
@@ -256,8 +257,7 @@ export const Setting = ({ navigation }: IRouterParams) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: themeColors.background.secondary,
   },
   title: {
     paddingTop: 2,
@@ -274,7 +274,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingTop: 20,
+    paddingBottom: 16,
+    backgroundColor: '#FFFFFF',
+    marginBottom: 10
   },
   profile: {
     flex: 1,
@@ -310,11 +313,12 @@ const styles = StyleSheet.create({
   },
   settingContainer: {
     flexShrink: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingBottom: 8,
+    backgroundColor: '#FFFFFF',
   },
   settingItem: {
     paddingVertical: 16,
+    paddingHorizontal: 16,
     borderBottomWidth: 0.5,
     borderBottomColor: '#F0F0F0',
     flexDirection: 'row',
@@ -346,7 +350,10 @@ const styles = StyleSheet.create({
   footerContainer: {
     paddingHorizontal: 16,
     paddingTop: 20,
-    paddingBottom: 20,
+    paddingBottom: 100,
+    backgroundColor: '#FFFFFF',
+    flex: 1,
+    justifyContent: 'flex-start',
   },
   button: {
     width: '100%',
@@ -354,7 +361,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderRadius: 8,
-    backgroundColor: '#FFF4E5',
+    backgroundColor: themeColors.background.disabled,
   },
   buttonText: {
     color: themeColors.primary,

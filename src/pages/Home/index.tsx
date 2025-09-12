@@ -14,7 +14,7 @@ import TUIChatEngine, {
 } from '@tencentcloud/chat-uikit-engine';
 
 import { ConversationListScreen } from '../UIKitScreen';
-import { Setting as SettingScreen } from '../Setting';
+import { SettingNavigator } from '../Setting/SettingNavigator';
 import { Relation } from '../Relation';
 import { themeColors } from '../../themes/colors';
 
@@ -147,7 +147,7 @@ export const Home = () => {
         />
         <Tab.Screen
           name="Profile"
-          component={SettingScreen}
+          component={SettingNavigator}
           options={{
             title: '我的',
           }}
@@ -164,8 +164,10 @@ const styles = StyleSheet.create({
   },
   tabBarStyle: {
     paddingTop: 8,
-    paddingBottom: 20,
-    height: 70,
+    paddingBottom: 8,
+    height: 60,
+    backgroundColor: themeColors.background.disabled,
+    borderTopWidth: 0,
   },
   tabBarItemStyle: {
     gap: 3,

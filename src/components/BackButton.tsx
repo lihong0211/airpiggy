@@ -3,85 +3,56 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  ViewStyle,
-  ImageStyle,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { themeColors } from '../themes/colors';
+
+const backIcon = require('../static/back.png');
 
 interface BackButtonProps {
-  onPress: () => void;
-  style?: ViewStyle;
-  imageStyle?: ImageStyle;
-  showSafeArea?: boolean; // 是否显示安全区域
-  safeAreaPadding?: number; // 安全区域额外padding
+  onPress?: () => void;
+  style?: any;
+  iconStyle?: any;
 }
 
 export const BackButton: React.FC<BackButtonProps> = ({
   onPress,
   style,
-  imageStyle,
-  showSafeArea = true,
-  safeAreaPadding = 12,
+  iconStyle,
 }) => {
-  const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
 
-  const containerStyle = showSafeArea
-    ? [styles.container, { paddingTop: insets.top + safeAreaPadding }, style]
-    : [styles.container, style];
+  const handlePress = () => {
+    if (onPress) {
+      onPress();
+    } else {
+      navigation.goBack();
+    }
+  };
 
   return (
     <TouchableOpacity
-      style={containerStyle}
-      onPress={onPress}
-      activeOpacity={0.7}
+      style={[styles.backButton, style]}
+      onPress={handlePress}
     >
-      <Image
-        source={require('../static/back.png')}
-        style={[styles.backImage, imageStyle]}
-        resizeMode="contain"
+      <Image 
+        source={backIcon} 
+        style={[styles.backIcon, iconStyle]} 
       />
     </TouchableOpacity>
   );
 };
 
-// 预设样式的返回按钮
-export const BackButtonWithSafeArea: React.FC<{
-  onPress: () => void;
-  style?: ViewStyle;
-  imageStyle?: ImageStyle;
-}> = ({ onPress, style, imageStyle }) => (
-  <BackButton
-    onPress={onPress}
-    style={style}
-    imageStyle={imageStyle}
-    showSafeArea={true}
-    safeAreaPadding={12}
-  />
-);
-
-export const BackButtonWithoutSafeArea: React.FC<{
-  onPress: () => void;
-  style?: ViewStyle;
-  imageStyle?: ImageStyle;
-}> = ({ onPress, style, imageStyle }) => (
-  <BackButton
-    onPress={onPress}
-    style={style}
-    imageStyle={imageStyle}
-    showSafeArea={false}
-  />
-);
-
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 20,
-    paddingBottom: 12,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
+  backButton: {
+    marginRight: 16,
+    padding: 4,
   },
-  backImage: {
+  backIcon: {
     width: 24,
     height: 24,
+    tintColor: '#555555', // 深灰色
   },
 });
+
+export default BackButton;
