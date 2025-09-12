@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  StatusBar,
   Linking,
   Alert,
+  Clipboard,
 } from 'react-native';
+import { BackHeader } from '../../components/BackHeader';
 import { themeColors } from '../../themes/colors';
 
 const logoImage = require('../../static/logo_active.png');
@@ -21,48 +22,68 @@ interface AboutProps {
 export const About: React.FC<AboutProps> = ({ navigation }) => {
   const appVersion = '1.2.0'; // 这里可以从package.json或其他地方获取版本号
 
+  // Tab 控制逻辑现在由 SettingNavigator 统一处理
+
   const linkToProtocolUserService = () => {
     // 跳转到用户协议页面
-    console.log('跳转到用户协议');
-    Alert.alert('提示', '用户协议页面');
+    navigation.navigate('UserAgreement');
   };
 
   const linkToProtocolPrivacy = () => {
     // 跳转到隐私政策页面
-    console.log('跳转到隐私政策');
-    Alert.alert('提示', '隐私政策页面');
+    navigation.navigate('PrivacyPolicy');
   };
 
-  const handleEmailPress = () => {
+  const handleEmailPress = async () => {
     const email = 'report@airpiggy.cn';
     const subject = '投诉举报';
     const url = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
 
-    Linking.canOpenURL(url).then(supported => {
+    try {
+      const supported = await Linking.canOpenURL(url);
       if (supported) {
-        Linking.openURL(url);
+        await Linking.openURL(url);
       } else {
-        Alert.alert('错误', '无法打开邮件应用');
+        // 提供更详细的错误信息和备选方案
+        Alert.alert(
+          '无法打开邮件应用',
+          `请确保设备上已安装邮件应用，或手动发送邮件至：\n\n${email}`,
+          [
+            {
+              text: '复制邮箱地址',
+              onPress: () => {
+                Clipboard.setString(email);
+                Alert.alert('提示', '邮箱地址已复制到剪贴板');
+              }
+            },
+            { text: '确定', style: 'default' }
+          ]
+        );
       }
-    });
+    } catch (error) {
+      console.error('Email opening error:', error);
+      Alert.alert(
+        '错误',
+        `无法打开邮件应用，请手动发送邮件至：\n\n${email}`,
+        [
+          {
+            text: '复制邮箱地址',
+            onPress: () => {
+              Clipboard.setString(email);
+              Alert.alert('提示', '邮箱地址已复制到剪贴板');
+            }
+          },
+          { text: '确定', style: 'default' }
+        ]
+      );
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="transparent" translucent />
-
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>← 返回</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>关于空气小猪</Text>
-      </View>
-
-      {/* Content */}
+      <BackHeader 
+        title="关于空气小猪" 
+      />
       <View style={styles.content}>
         {/* Logo and App Info */}
         <View style={styles.profileHeader}>

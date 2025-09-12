@@ -42,7 +42,7 @@ export const FriendModal: React.FC<FriendModalProps> = ({
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
     >
       <TouchableOpacity
@@ -52,11 +52,6 @@ export const FriendModal: React.FC<FriendModalProps> = ({
       >
         <View style={styles.modalContainer}>
           <TouchableOpacity activeOpacity={1} style={styles.modal}>
-            {/* 标题 */}
-            <View style={styles.header}>
-              <Text style={styles.title}>加我为好友时</Text>
-            </View>
-            
             {/* 设置选项 */}
             <View style={styles.content}>
               {friendSettings.map((setting, index) => (

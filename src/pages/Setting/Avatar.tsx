@@ -17,13 +17,23 @@ import {
 } from 'react-native-image-picker';
 import { Avatar } from '@tencentcloud/chat-uikit-react-native';
 import { themeColors } from '../../themes/colors';
+import { useUserStore } from '../../hooks/useUserStore';
 
 interface AvatarProps {
   navigation: any;
 }
 
 export const AvatarPage: React.FC<AvatarProps> = ({ navigation }) => {
-  const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const { user } = useUserStore();
+  const [avatarUrl, setAvatarUrl] = useState<string>(user?.avatarUrl || '');
+
+  // 当用户信息更新时，同步头像URL
+  React.useEffect(() => {
+    if (user?.avatarUrl) {
+      console.log('📷 用户头像URL:', user.avatarUrl);
+      setAvatarUrl(user.avatarUrl);
+    }
+  }, [user?.avatarUrl]);
 
   const handleUpdateAvatar = () => {
     Alert.alert('选择头像', '请选择获取头像的方式', [

@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  StatusBar,
   Modal,
   ScrollView,
   Switch,
@@ -73,9 +72,6 @@ export const Translate: React.FC<TranslateProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor={themeColors.background.secondary} barStyle="dark-content" />
-
-      {/* Header */}
       <BackHeader title="翻译设置" />
 
       {/* Content */}

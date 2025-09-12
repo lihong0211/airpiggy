@@ -30,7 +30,7 @@ interface IConfig {
 }
 
 export const Setting = ({ navigation }: IRouterParams) => {
-  const { user, updateUserInfo, fetchUserInfo } = useUserStore();
+  const { user, updateUserInfo, fetchUserInfo, clearUserInfo } = useUserStore();
   const [configList, setConfigList] = useState<IConfig[]>([]);
   const [isPageShow, setIsPageShow] = useState<boolean>(true);
   const [modeModalVisible, setModeModalVisible] = useState<boolean>(false);
@@ -42,13 +42,16 @@ export const Setting = ({ navigation }: IRouterParams) => {
 
   const onPress = () => {
     LogoutChat(() => {
+      // 清除用户信息
+      clearUserInfo();
       navigation.navigate('Login');
     });
   };
 
-  // 从服务器获取用户资料
+  // 从服务器获取用户资料（智能缓存）
   const loadUserInfo = async () => {
     try {
+      // fetchUserInfo 现在有智能缓存，不会重复请求
       await fetchUserInfo();
     } catch (error) {
       console.log('Error loading user info:', error);
@@ -176,7 +179,7 @@ export const Setting = ({ navigation }: IRouterParams) => {
           <Avatar 
             size={66} 
             radius={4} 
-            uri={user?.avatarUrl && user.avatarUrl.trim() !== '' ? user.avatarUrl : undefined} 
+            uri={user?.avatarUrl && user.avatarUrl.trim() !== '' ? user.avatarUrl : ''} 
           />
           <View style={styles.profile}>
             <Text style={styles.nick} ellipsizeMode="tail" numberOfLines={1}>
@@ -213,7 +216,7 @@ export const Setting = ({ navigation }: IRouterParams) => {
               </Text>
               <View style={styles.content}>
                 {item.name === '头像' ? (
-                  <Avatar size={30} radius={15} uri={user?.avatarUrl} />
+                  <Avatar size={30} radius={15} uri={user?.avatarUrl || ''} />
                 ) : (
                   <Text
                     style={styles.value}

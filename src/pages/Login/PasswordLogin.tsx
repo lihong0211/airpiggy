@@ -16,7 +16,7 @@ import { colors, themeColors } from '../../themes/colors';
 import { pwdLogin } from '../../api/api';
 import type { WechatLoginRequest, WechatLoginResponse } from '../../api/types';
 import { ToastContainer } from '../../components/Toast';
-import { BackButtonWithoutSafeArea } from '../../components/BackButton';
+import BackHeader from '../../components/BackHeader';
 
 export const PasswordLogin = ({ navigation }: IRouterParams) => {
   const [username, setUsername] = useState<string>('');
@@ -97,25 +97,14 @@ export const PasswordLogin = ({ navigation }: IRouterParams) => {
     }
   };
 
-  const onPressBack = () => {
-    navigation.goBack();
-  };
-
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
-      <View style={styles.backButtonContainer}>
-        <BackButtonWithoutSafeArea onPress={onPressBack} />
-      </View>
+      <BackHeader  title="账号密码登录" />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.contentContainer}
       >
-        {/* 标题 */}
-        <Text style={styles.title}>账号密码登录</Text>
-
-        {/* 账号输入 */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>账号</Text>
           <View

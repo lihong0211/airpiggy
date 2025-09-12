@@ -14,7 +14,6 @@ import { Login as LoginScreen } from './src/pages/Login/index';
 import { PasswordLogin as PasswordLoginScreen } from './src/pages/Login/PasswordLogin';
 import { Language as LanguageScreen } from './src/pages/Language';
 import { Home as HomeScreen } from './src/pages/Home';
-import { About as AboutScreen } from './src/pages/About';
 import { ChatScreen, ChatSettingScreen } from './src/pages/UIKitScreen';
 
 // Setting related pages
@@ -25,10 +24,13 @@ import uikitResources from '@tencentcloud/chat-uikit-react-native/i18n';
 
 import { LoginUsingStorageInfo } from './initApp/index';
 import { StyleSheet } from 'react-native';
+import { useUserStore } from './src/hooks/useUserStore';
+import { ToastContainer } from './src/components/Toast';
 
 function App(): React.JSX.Element {
   const Stack = createNativeStackNavigator();
   const navigationRef = useNavigationContainerRef();
+  const { fetchUserInfo } = useUserStore();
   // Init localization
   TUITranslateService.provideLanguages({
     'en-US': {
@@ -46,8 +48,10 @@ function App(): React.JSX.Element {
   useEffect(() => {
     LoginUsingStorageInfo(() => {
       navigationRef.current?.navigate('Home' as never);
+      // 登录成功后获取用户信息
+      fetchUserInfo();
     });
-  }, [navigationRef]);
+  }, [navigationRef]); // 移除 fetchUserInfo 依赖，避免无限循环
 
   return (
     <SafeAreaProvider>
@@ -77,17 +81,11 @@ function App(): React.JSX.Element {
                   headerTitleAlign: 'center',
                 }}
               />
-              <Stack.Screen
-                name="About"
-                component={AboutScreen}
-                options={{
-                  headerShown: true,
-                  headerTitleAlign: 'center',
-                }}
-              />
               <Stack.Screen name="Relation" component={Relation} />
             </Stack.Navigator>
           </SafeAreaView>
+          {/* Toast容器 - 需要放在SafeAreaView外面以确保全屏显示 */}
+          <ToastContainer />
         </NavigationContainer>
       </UIKitProvider>
     </SafeAreaProvider>

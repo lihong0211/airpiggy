@@ -5,12 +5,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  StatusBar,
   Alert,
 } from 'react-native';
 import { Avatar } from '@tencentcloud/chat-uikit-react-native';
-import { themeColors } from '../../themes/colors';
 import { useUserStore } from '../../hooks/useUserStore';
+import { BackHeader } from '../../components/BackHeader';
 
 interface ProfileProps {
   navigation: any;
@@ -87,18 +86,7 @@ export const Profile: React.FC<ProfileProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="transparent" translucent />
-
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>← 返回</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>个人资料</Text>
-      </View>
+      <BackHeader title="个人资料" />
 
       {/* Content */}
       <View style={styles.content}>
@@ -111,7 +99,7 @@ export const Profile: React.FC<ProfileProps> = ({ navigation }) => {
             <Text style={styles.profileTitle}>{item.title}</Text>
             <View style={styles.profileRight}>
               {item.showAvatar ? (
-                <Avatar size={30} radius={15} uri={user?.avatarUrl} />
+                <Avatar size={30} radius={15} uri={user?.avatarUrl || ''} />
               ) : (
                 <Text style={styles.profileValue}>{item.value}</Text>
               )}
@@ -128,26 +116,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: themeColors.primary,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
   },
   content: {
     flex: 1,

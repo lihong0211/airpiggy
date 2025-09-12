@@ -76,5 +76,9 @@
 	<array>
 		<string>applinks:www.aa5p.com</string>
 	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mailto</string>
+	</array>
 </dict>
 </plist>

@@ -4,6 +4,8 @@ import {
   useIsFocused,
   type ParamListBase,
   type RouteProp,
+  getFocusedRouteNameFromRoute,
+  useNavigationState,
 } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -54,6 +56,8 @@ export const Home = () => {
   const [isPageShow, setIsPageShow] = useState<boolean>(true);
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [markCount, setMarkCount] = useState<number>(0);
+  
+  // Tab 隐藏逻辑移回到页面级别处理
 
   const onTotalUnreadCount = (value: number) => {
     console.log('📬 未读消息数量更新:', value);
@@ -113,6 +117,7 @@ export const Home = () => {
       const icon = focused ? menuItem.focused : menuItem.default;
       return <Image source={icon} style={styles.icon} />;
     };
+    
     return {
       tabBarIcon,
       headerShown: false,

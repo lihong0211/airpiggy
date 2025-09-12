@@ -6,9 +6,5 @@ export {
   SafeAreaHorizontal, 
   useSafeArea 
 } from './SafeAreaWrapper';
-export { 
-  BackButton, 
-  BackButtonWithSafeArea, 
-  BackButtonWithoutSafeArea 
-} from './BackButton';
-export { BackHeader } from './BackHeader';
+
+export { BackHeader, BackButton } from './BackHeader';

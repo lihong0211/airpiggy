@@ -8,7 +8,6 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-import { themeColors } from '../../themes/colors';
 
 const selectedIcon = require('../../static/selected.png');
 
@@ -41,7 +40,7 @@ export const ModeModal: React.FC<ModeModalProps> = ({
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
     >
       <TouchableOpacity
@@ -51,11 +50,6 @@ export const ModeModal: React.FC<ModeModalProps> = ({
       >
         <View style={styles.modalContainer}>
           <TouchableOpacity activeOpacity={1} style={styles.modal}>
-            {/* 标题 */}
-            <View style={styles.header}>
-              <Text style={styles.title}>模式</Text>
-            </View>
-            
             {/* 模式选项 */}
             <View style={styles.content}>
               {modes.map((mode, index) => (
